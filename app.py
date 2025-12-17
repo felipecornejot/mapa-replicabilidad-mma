@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from pathlib import Path
+import re
 
 # =========================
 # Configuración de página
@@ -37,6 +38,43 @@ def find_asset(filename: str) -> Path | None:
             return p
     return None
 
+def _clean_label(s: str) -> str:
+    if s is None:
+        return ""
+    s = str(s).strip()
+    # Quita emoji inicial tipo "🔵 " o "🟢 "
+    s = re.sub(r"^[\U0001F300-\U0001FAFF]\s*", "", s)
+    return s
+
+def _class_badge(label: str) -> str:
+    raw = "" if label is None else str(label)
+    clean = _clean_label(raw)
+
+    # Colores
+    color_map = {
+        "Quick Win": "#27AE60",
+        "Estratégico": "#0f69b4",
+        "Táctico": "#F39C12",
+        "Largo Plazo": "#E62639",
+        "Largo plazo": "#E62639",
+        "Largo-Plazo": "#E62639",
+    }
+
+    # Detecta por contenido (tolerante)
+    dot = "#9AA5B1"
+    for k, v in color_map.items():
+        if k.lower() in clean.lower():
+            dot = v
+            break
+
+    return (
+        "<span style='display:inline-flex; align-items:center; gap:8px;'>"
+        f"<span style='width:10px; height:10px; border-radius:999px; background:{dot}; "
+        "display:inline-block; box-shadow: 0 0 0 1px rgba(15,105,180,0.20);'></span>"
+        f"<span>{clean}</span>"
+        "</span>"
+    )
+
 # =========================
 # Estilo CSS (sobrio)
 # =========================
@@ -44,15 +82,9 @@ st.markdown(
     """
     <style>
       /* --- Header superior transparente / oculto --- */
-      header[data-testid="stHeader"] {
-        background: transparent !important;
-        box-shadow: none !important;
-      }
+      header[data-testid="stHeader"] { background: transparent !important; box-shadow: none !important; }
       div[data-testid="stDecoration"] { background: transparent !important; }
-      div[data-testid="stToolbar"] {
-        background: transparent !important;
-        box-shadow: none !important;
-      }
+      div[data-testid="stToolbar"] { background: transparent !important; box-shadow: none !important; }
       div[data-testid="stToolbar"] { visibility: hidden !important; height: 0 !important; }
       header[data-testid="stHeader"] { height: 0 !important; }
 
@@ -65,7 +97,7 @@ st.markdown(
         background-color: transparent !important;
       }
 
-      /* Línea bajo el título más delgada y elegante */
+      /* Línea bajo el título más delgada */
       h1 {
         font-size: 32px !important;
         font-weight: 600 !important;
@@ -78,36 +110,12 @@ st.markdown(
 
       .stMarkdown, .stCaption, p, .stText { color: #0f69b4 !important; }
 
-      /* --- MÉTRICAS: valores en azul --- */
+      /* Métricas en azul */
       div[data-testid="stMetricValue"] { color: #0f69b4 !important; }
       div[data-testid="stMetricLabel"] { color: #0f69b4 !important; font-weight: 600 !important; }
       div[data-testid="stMetricDelta"] { color: #0f69b4 !important; opacity: 0.85 !important; }
 
-      /* --- TABLA (st.dataframe): texto en azul corporativo --- */
-      /* Contenedor general de la tabla */
-      div[data-testid="stDataFrame"] * {
-        color: #0f69b4 !important;
-      }
-      /* Header (celdas superiores) */
-      div[data-testid="stDataFrame"] [role="columnheader"] {
-        color: #0f69b4 !important;
-        font-weight: 600 !important;
-        background: rgba(15,105,180,0.03) !important;
-        border-bottom: 1px solid rgba(15,105,180,0.18) !important;
-      }
-      /* Celdas */
-      div[data-testid="stDataFrame"] [role="gridcell"] {
-        color: #0f69b4 !important;
-        background: transparent !important;
-        border-bottom: 1px solid rgba(15,105,180,0.08) !important;
-      }
-      /* Scrollbar (opcional, sobrio) */
-      div[data-testid="stDataFrame"] ::-webkit-scrollbar-thumb {
-        background: rgba(15,105,180,0.25) !important;
-        border-radius: 8px !important;
-      }
-
-      /* Nota al pie bajo el gráfico */
+      /* Nota al pie */
       .footnote {
         margin-top: 10px;
         padding: 10px 12px;
@@ -139,7 +147,49 @@ st.markdown(
       }
       div[role="listbox"] li { color: #0f69b4 !important; background-color: white !important; }
 
-      .stPlotlyChart, .stDataFrame { visibility: visible !important; opacity: 1 !important; }
+      /* =========================
+         Tabla HTML (control total)
+         ========================= */
+      .mma-table-wrap{
+        border: 1px solid rgba(15,105,180,0.18);
+        border-radius: 10px;
+        overflow: auto;
+        max-height: 340px;
+        background: white;
+      }
+      .mma-table-wrap table{
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+        font-size: 13px;
+        background: white;
+      }
+      .mma-table-wrap thead th{
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: rgba(15,105,180,0.03);
+        color: #0f69b4;
+        font-weight: 600;
+        text-align: left;
+        padding: 10px 12px;
+        border-bottom: 1px solid rgba(15,105,180,0.18);
+        white-space: nowrap;
+      }
+      .mma-table-wrap tbody td{
+        color: #0f69b4;
+        background: white;
+        padding: 8px 12px;
+        border-bottom: 1px solid rgba(15,105,180,0.08);
+        vertical-align: top;
+      }
+      .mma-table-wrap tbody tr:hover td{
+        background: rgba(15,105,180,0.03);
+      }
+      .mma-table-wrap::-webkit-scrollbar-thumb{
+        background: rgba(15,105,180,0.25);
+        border-radius: 8px;
+      }
     </style>
     """,
     unsafe_allow_html=True
@@ -155,11 +205,9 @@ def load_data():
 try:
     df = load_data()
 
-    # Encabezado
     st.title("Mapa de Replicabilidad de Instrumentos Internacionales")
     st.caption("Consultoría Sustrend para la Subsecretaría del Medio Ambiente | ID: 608897-205-COT25")
 
-    # Guía general
     st.markdown("---")
     st.markdown(
         """
@@ -178,7 +226,6 @@ Clasificación estratégica:
         """
     )
 
-    # Filtros
     st.markdown("---")
     st.markdown("### Filtros de Análisis")
     st.markdown("Seleccione los países y clasificaciones que desea analizar.")
@@ -189,14 +236,12 @@ Clasificación estratégica:
             "País de Origen",
             options=df["País Origen (P2)"].unique(),
             default=df["País Origen (P2)"].unique(),
-            help="Filtra los instrumentos por país de origen"
         )
     with col2:
         filtro_clase = st.multiselect(
             "Clasificación Estratégica",
             options=df["Clasificación"].unique(),
             default=df["Clasificación"].unique(),
-            help="Filtra los instrumentos por clasificación estratégica"
         )
 
     df_filtered = df[
@@ -204,14 +249,10 @@ Clasificación estratégica:
         (df["Clasificación"].isin(filtro_clase))
     ].copy()
 
-    # Tamaños de puntos
     df_filtered["Size"] = 25
     df_filtered.loc[df_filtered["Clasificación"] == "🔵 Estratégico", "Size"] = 35
     df_filtered.loc[df_filtered["Clasificación"] == "🟢 Quick Win", "Size"] = 30
 
-    # =========================
-    # Gráfico principal
-    # =========================
     st.markdown("---")
     st.markdown("### Análisis de Replicabilidad")
 
@@ -235,7 +276,8 @@ Clasificación estratégica:
         color_discrete_map={
             "🟢 Quick Win": "#27AE60",
             "🔵 Estratégico": "#0f69b4",
-            "🟡 Táctico": "#F39C12"
+            "🟡 Táctico": "#F39C12",
+            "🔴 Largo Plazo": "#E62639"
         },
         labels={
             "Score Factib. Chile": "Factibilidad en Chile (1-5)",
@@ -243,11 +285,9 @@ Clasificación estratégica:
         }
     )
 
-    # Umbrales
     fig.add_vline(x=3, line_dash="dash", line_width=1.8, line_color="#eb3c46", opacity=0.8)
     fig.add_hline(y=3, line_dash="dash", line_width=1.8, line_color="#eb3c46", opacity=0.8)
 
-    # Estilo trazas
     fig.update_traces(
         textposition="top center",
         marker=dict(line=dict(width=0.8, color="rgba(255,255,255,0.8)")),
@@ -324,12 +364,10 @@ Clasificación estratégica:
         showlegend=True
     )
 
-    # Cuadrantes
     fig.add_shape(type="rect", x0=0.5, y0=3,   x1=3,   y1=5.5, fillcolor="rgba(39, 174, 96, 0.05)", line=dict(width=0), layer="below")
     fig.add_shape(type="rect", x0=3,   y0=3,   x1=5.5, y1=5.5, fillcolor="rgba(15, 105, 180, 0.05)", line=dict(width=0), layer="below")
     fig.add_shape(type="rect", x0=0.5, y0=0.5, x1=3,   y1=3,   fillcolor="rgba(243, 156, 18, 0.04)", line=dict(width=0), layer="below")
 
-    # Etiquetas de cuadrantes
     for label in [
         dict(x=1.75, y=4.5,  text="QUICK WINS",   font=dict(size=10, family="Arial", color="#27AE60"), showarrow=False, bgcolor="white", bordercolor="#27AE60", borderwidth=0.5, borderpad=3),
         dict(x=4.25, y=4.5,  text="ESTRATÉGICOS", font=dict(size=10, family="Arial", color="#0f69b4"), showarrow=False, bgcolor="white", bordercolor="#0f69b4", borderwidth=0.5, borderpad=3),
@@ -337,7 +375,6 @@ Clasificación estratégica:
     ]:
         fig.add_annotation(**label)
 
-    # Etiquetas de umbral
     fig.add_annotation(
         x=3, y=5.4,
         text="Umbral Factibilidad",
@@ -365,7 +402,6 @@ Clasificación estratégica:
 
     st.plotly_chart(fig, use_container_width=True)
 
-    # Nota al pie bajo el gráfico
     st.markdown(
         """
 <div class="footnote">
@@ -388,26 +424,20 @@ Clasificación estratégica:
         unsafe_allow_html=True
     )
 
-    # =========================
-    # Métricas
-    # =========================
     st.markdown("---")
     st.markdown("### Resumen de Clasificaciones")
     st.markdown("Este resumen muestra la cantidad de instrumentos por categoría estratégica según los filtros aplicados.")
 
     col1, col2, col3 = st.columns(3)
     with col1:
-        quick_wins = int((df_filtered["Clasificación"] == "🟢 Quick Win").sum())
-        st.metric("Quick Wins", quick_wins)
+        st.metric("Quick Wins", int((df_filtered["Clasificación"] == "🟢 Quick Win").sum()))
     with col2:
-        estrategicos = int((df_filtered["Clasificación"] == "🔵 Estratégico").sum())
-        st.metric("Estratégicos", estrategicos)
+        st.metric("Estratégicos", int((df_filtered["Clasificación"] == "🔵 Estratégico").sum()))
     with col3:
-        tacticos = int((df_filtered["Clasificación"] == "🟡 Táctico").sum())
-        st.metric("Tácticos", tacticos)
+        st.metric("Tácticos", int((df_filtered["Clasificación"] == "🟡 Táctico").sum()))
 
     # =========================
-    # Tabla
+    # Tabla (HTML con badge de clasificación)
     # =========================
     st.markdown("---")
     st.markdown("### Ficha Técnica de Instrumentos")
@@ -425,20 +455,20 @@ Clasificación estratégica:
     ].copy()
 
     display_df = display_df.sort_values("Score Impacto (1-5)", ascending=False)
+    display_df = display_df.rename(columns={
+        "ID (P2)": "ID",
+        "Instrumento (Nombre Original/Local)": "Instrumento",
+        "País Origen (P2)": "País",
+        "Score Factib. Chile": "Factibilidad",
+        "Score Impacto (1-5)": "Impacto",
+        "Clasificación": "Clasificación",
+    })
 
-    st.dataframe(
-        display_df,
-        use_container_width=True,
-        height=300,
-        column_config={
-            "ID (P2)": st.column_config.TextColumn("ID", width="small"),
-            "Instrumento (Nombre Original/Local)": st.column_config.TextColumn("Instrumento", width="large"),
-            "País Origen (P2)": st.column_config.TextColumn("País", width="medium"),
-            "Score Factib. Chile": st.column_config.NumberColumn("Factibilidad", format="%.1f", width="small"),
-            "Score Impacto (1-5)": st.column_config.NumberColumn("Impacto", format="%.1f", width="small"),
-            "Clasificación": st.column_config.TextColumn("Clasificación", width="medium"),
-        },
-    )
+    # Badge: puntito + texto (HTML)
+    display_df["Clasificación"] = display_df["Clasificación"].apply(_class_badge)
+
+    table_html = display_df.to_html(index=False, escape=False)
+    st.markdown(f"<div class='mma-table-wrap'>{table_html}</div>", unsafe_allow_html=True)
 
     # =========================
     # Pie de página con membrete
@@ -447,7 +477,6 @@ Clasificación estratégica:
     st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
 
     membrete_path = find_asset("membrete.png")
-
     col1, col2, col3 = st.columns([3, 6, 3])
     with col1:
         if membrete_path is not None:
