@@ -1,0 +1,16 @@
+ID (P2),Instrumento (Nombre Original/Local),País Origen (P2),Categoría (P2),KPI Principal Afectado (P5),Score Impacto (1-5),Viab. Regulat. Chile,Madurez Tecno. Chile,"Costo Implem. (1=Alto, 5=Bajo)",Aceptación Social,Score Factib. Chile,Clasificación
+1,Pasaporte Digital de Productos (DPP),🇪🇺 Unión Europea,Regulatorio,Trazabilidad de Materiales (%),5,2,3,2,4,2.75,🔵 Estratégico
+2,Green Public Procurement (Compras Verdes),🇩🇰 Dinamarca,Económico,% Gasto Público Sostenible,4,5,4,4,5,4.50,🟢 Quick Win
+3,Impuesto al Vertedero (Landfill Tax),🇳🇱 Países Bajos,Económico,Tasa de Desvío de Residuos,5,2,5,3,2,3.00,🔵 Estratégico
+4,Sellos de Circularidad Voluntarios,🇨🇴 Colombia,Informativo,N° Empresas Certificadas,3,5,5,5,5,5.00,🟡 Táctico
+5,Estrategia Nacional de Ecodiseño,🇩🇪 Alemania,Regulatorio,Intensidad de Materiales (DMC),5,3,3,2,4,3.00,🔵 Estratégico
+6,Centros de Reparación Comunitarios,🇸🇪 Suecia,Voluntario,Extensión Vida Útil Prod.,3,5,4,4,5,4.50,🟡 Táctico
+7,Ley REP (Envases y Embalajes),🇪🇸 España,Regulatorio,Tasa de Reciclaje (%),5,5,4,3,4,4.00,🟢 Quick Win
+8,Bonos de Carbono Sector Construcción,🇬🇧 Reino Unido,Económico,Emisiones GEI (tCO2e),4,3,3,2,3,2.75,🔵 Estratégico
+9,Hubs de Simbiosis Industrial,🇲🇽 México,Cooperación,Toneladas Residuos Valoriz.,4,4,3,3,4,3.50,🟢 Quick Win
+10,IVA Diferenciado para Reparación,🇺🇾 Uruguay,Económico,Tasa de Reparabilidad,4,1,5,2,5,3.25,🔵 Estratégico
+11,Plataforma de Innovación Abierta,🇨🇷 Costa Rica,Cooperación,N° Patentes Verdes,3,4,4,4,5,4.25,🟡 Táctico
+12,Responsabilidad Extendida Textiles,🇫🇷 Francia,Regulatorio,Residuos Textiles (t),5,2,1,2,4,2.25,🔴 Largo Plazo
+13,Índice de Circularidad Regional,🇮🇹 Italia,Informativo,Índice Circularidad (0-100),3,4,4,4,4,4.00,🟡 Táctico
+14,Subsidio a la I+D en Bioplásticos,🇫🇮 Finlandia,Económico,% Material Biobasado,4,4,2,2,5,3.25,🔵 Estratégico
+15,"Programa ""Oficina Verde"" (Gobierno)",🇨🇱 Chile (Piloto),Voluntario,Consumo de Papel/Agua,2,5,5,5,5,5.00,🟡 Táctico
