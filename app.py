@@ -43,21 +43,55 @@ def find_asset(filename: str) -> Path | None:
 st.markdown(
     """
     <style>
-      .stApp > header { background-color: white !important; }
+      /* --- Quitar / transparentar la franja superior (header/toolbar Streamlit Cloud) --- */
+      header[data-testid="stHeader"] {
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+      div[data-testid="stDecoration"] {
+        background: transparent !important;
+      }
+      div[data-testid="stToolbar"] {
+        background: transparent !important;
+        box-shadow: none !important;
+      }
+      /* Si la barra superior se ve negra en tu deploy, esto la oculta (deja el contenido limpio) */
+      div[data-testid="stToolbar"] { visibility: hidden !important; height: 0 !important; }
+      header[data-testid="stHeader"] { height: 0 !important; }
+
       .stApp, .main, .block-container { background-color: white !important; }
       .block-container { padding-top: 1rem !important; }
 
       h1, h2, h3, h4, h5, h6 {
         color: #0f69b4 !important;
         font-family: Arial, sans-serif !important;
-        background-color: white !important;
+        background-color: transparent !important;
       }
 
-      h1 { font-size: 32px !important; font-weight: 600 !important; border-bottom: 2px solid #0f69b4 !important; padding-bottom: 10px !important; margin-bottom: 15px !important; }
+      h1 {
+        font-size: 32px !important;
+        font-weight: 600 !important;
+        border-bottom: 2px solid #0f69b4 !important;
+        padding-bottom: 10px !important;
+        margin-bottom: 15px !important;
+      }
       h2 { font-size: 22px !important; font-weight: 600 !important; margin-top: 20px !important; margin-bottom: 10px !important; }
       h3 { font-size: 18px !important; font-weight: 600 !important; }
 
       .stMarkdown, .stCaption, p, .stText { color: #0f69b4 !important; }
+
+      /* --- MÉTRICAS: asegurar valores (números) en azul --- */
+      div[data-testid="stMetricValue"] {
+        color: #0f69b4 !important;
+      }
+      div[data-testid="stMetricLabel"] {
+        color: #0f69b4 !important;
+        font-weight: 600 !important;
+      }
+      div[data-testid="stMetricDelta"] {
+        color: #0f69b4 !important;
+        opacity: 0.85 !important;
+      }
 
       /* Nota al pie bajo el gráfico */
       .footnote {
@@ -85,7 +119,10 @@ st.markdown(
         border: 1px solid rgba(15,105,180,0.45) !important;
         border-radius: 6px !important;
       }
-      div[data-baseweb="select"] span, div[data-baseweb="input"] input { color: #0f69b4 !important; background-color: transparent !important; }
+      div[data-baseweb="select"] span, div[data-baseweb="input"] input {
+        color: #0f69b4 !important;
+        background-color: transparent !important;
+      }
       div[role="listbox"] li { color: #0f69b4 !important; background-color: white !important; }
 
       .stPlotlyChart, .stDataFrame { visibility: visible !important; opacity: 1 !important; }
@@ -209,7 +246,6 @@ Clasificación estratégica:
                       "<extra></extra>"
     )
 
-    # Layout (sin 'weight' porque Plotly lo rechaza)
     fig.update_layout(
         plot_bgcolor="white",
         paper_bgcolor="white",
@@ -287,7 +323,7 @@ Clasificación estratégica:
     ]:
         fig.add_annotation(**label)
 
-    # Etiquetas de umbral (sin HTML <b>)
+    # Etiquetas de umbral
     fig.add_annotation(
         x=3, y=5.4,
         text="Umbral Factibilidad",
@@ -313,10 +349,9 @@ Clasificación estratégica:
         yanchor="middle"
     )
 
-    # Mostrar gráfico
     st.plotly_chart(fig, use_container_width=True)
 
-    # Nota al pie bajo el gráfico (lo que pediste)
+    # Nota al pie bajo el gráfico
     st.markdown(
         """
 <div class="footnote">
