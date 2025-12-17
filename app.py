@@ -43,19 +43,16 @@ def find_asset(filename: str) -> Path | None:
 st.markdown(
     """
     <style>
-      /* --- Quitar / transparentar la franja superior (header/toolbar Streamlit Cloud) --- */
+      /* --- Header superior transparente / oculto --- */
       header[data-testid="stHeader"] {
         background: transparent !important;
         box-shadow: none !important;
       }
-      div[data-testid="stDecoration"] {
-        background: transparent !important;
-      }
+      div[data-testid="stDecoration"] { background: transparent !important; }
       div[data-testid="stToolbar"] {
         background: transparent !important;
         box-shadow: none !important;
       }
-      /* Si la barra superior se ve negra en tu deploy, esto la oculta (deja el contenido limpio) */
       div[data-testid="stToolbar"] { visibility: hidden !important; height: 0 !important; }
       header[data-testid="stHeader"] { height: 0 !important; }
 
@@ -68,10 +65,11 @@ st.markdown(
         background-color: transparent !important;
       }
 
+      /* Línea bajo el título más delgada y elegante */
       h1 {
         font-size: 32px !important;
         font-weight: 600 !important;
-        border-bottom: 2px solid #0f69b4 !important;
+        border-bottom: 1px solid rgba(15,105,180,0.55) !important;
         padding-bottom: 10px !important;
         margin-bottom: 15px !important;
       }
@@ -80,17 +78,33 @@ st.markdown(
 
       .stMarkdown, .stCaption, p, .stText { color: #0f69b4 !important; }
 
-      /* --- MÉTRICAS: asegurar valores (números) en azul --- */
-      div[data-testid="stMetricValue"] {
+      /* --- MÉTRICAS: valores en azul --- */
+      div[data-testid="stMetricValue"] { color: #0f69b4 !important; }
+      div[data-testid="stMetricLabel"] { color: #0f69b4 !important; font-weight: 600 !important; }
+      div[data-testid="stMetricDelta"] { color: #0f69b4 !important; opacity: 0.85 !important; }
+
+      /* --- TABLA (st.dataframe): texto en azul corporativo --- */
+      /* Contenedor general de la tabla */
+      div[data-testid="stDataFrame"] * {
         color: #0f69b4 !important;
       }
-      div[data-testid="stMetricLabel"] {
+      /* Header (celdas superiores) */
+      div[data-testid="stDataFrame"] [role="columnheader"] {
         color: #0f69b4 !important;
         font-weight: 600 !important;
+        background: rgba(15,105,180,0.03) !important;
+        border-bottom: 1px solid rgba(15,105,180,0.18) !important;
       }
-      div[data-testid="stMetricDelta"] {
+      /* Celdas */
+      div[data-testid="stDataFrame"] [role="gridcell"] {
         color: #0f69b4 !important;
-        opacity: 0.85 !important;
+        background: transparent !important;
+        border-bottom: 1px solid rgba(15,105,180,0.08) !important;
+      }
+      /* Scrollbar (opcional, sobrio) */
+      div[data-testid="stDataFrame"] ::-webkit-scrollbar-thumb {
+        background: rgba(15,105,180,0.25) !important;
+        border-radius: 8px !important;
       }
 
       /* Nota al pie bajo el gráfico */
@@ -145,7 +159,7 @@ try:
     st.title("Mapa de Replicabilidad de Instrumentos Internacionales")
     st.caption("Consultoría Sustrend para la Subsecretaría del Medio Ambiente | ID: 608897-205-COT25")
 
-    # Guía general (sin negritas/itálicas en cuerpo)
+    # Guía general
     st.markdown("---")
     st.markdown(
         """
@@ -310,12 +324,12 @@ Clasificación estratégica:
         showlegend=True
     )
 
-    # Cuadrantes (colores sutiles)
+    # Cuadrantes
     fig.add_shape(type="rect", x0=0.5, y0=3,   x1=3,   y1=5.5, fillcolor="rgba(39, 174, 96, 0.05)", line=dict(width=0), layer="below")
     fig.add_shape(type="rect", x0=3,   y0=3,   x1=5.5, y1=5.5, fillcolor="rgba(15, 105, 180, 0.05)", line=dict(width=0), layer="below")
     fig.add_shape(type="rect", x0=0.5, y0=0.5, x1=3,   y1=3,   fillcolor="rgba(243, 156, 18, 0.04)", line=dict(width=0), layer="below")
 
-    # Etiquetas de cuadrantes (sobrias)
+    # Etiquetas de cuadrantes
     for label in [
         dict(x=1.75, y=4.5,  text="QUICK WINS",   font=dict(size=10, family="Arial", color="#27AE60"), showarrow=False, bgcolor="white", bordercolor="#27AE60", borderwidth=0.5, borderpad=3),
         dict(x=4.25, y=4.5,  text="ESTRATÉGICOS", font=dict(size=10, family="Arial", color="#0f69b4"), showarrow=False, bgcolor="white", bordercolor="#0f69b4", borderwidth=0.5, borderpad=3),
@@ -453,3 +467,4 @@ Clasificación estratégica:
 except Exception as e:
     st.error(f"Error cargando el Dashboard: {e}")
     st.warning("Verifica que el nombre del archivo CSV sea: P7 Mapa de Replicabilidad Chile - Tabla de resultados procesados.csv")
+
