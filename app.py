@@ -1,133 +1,105 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import openpyxl
+import plotly.graph_objects as go
 
-st.set_page_config(page_title="Huella de Carbono - Dashboard", layout="wide")
+# 1. CONFIGURACIÓN DE PÁGINA Y ESTILO MMA
+st.set_page_config(page_title="Dashboard Economía Circular - MMA", layout="wide")
 
-st.title("📊 Dashboard de Huella de Carbono Organizacional - Sustrend")
-st.markdown("Este dashboard muestra **emisiones GEI** e indicadores, basado en los datos de la huella de carbono organizacional del Comité de Desarrollo Productivo Regional Bío-Bío (2024).")
+# Aplicación de colores institucionales según Manual de Normas MMA
+# Azul: #004488 | Rojo: #EF3340
+st.markdown("""
+    <style>
+    .main { background-color: #f9f9f9; }
+    .stMetric { background-color: #ffffff; border-left: 5px solid #004488; padding: 10px; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); }
+    h1 { color: #004488; border-bottom: 2px solid #EF3340; padding-bottom: 10px; }
+    h2 { color: #004488; }
+    .stButton>button { background-color: #004488; color: white; border-radius: 5px; }
+    </style>
+    """, unsafe_allow_html=True)
 
-st.sidebar.header("📁 Cargar datos")
-uploaded_file = st.sidebar.file_uploader(
-    "Sube la planilla Excel de huella de carbono (*.xlsx)",
-    type=["xlsx"], help="Cargue archivo Excel con el cálculo oficial."
+# 2. CARGA DE DATOS (Simulada con tus hallazgos de P2)
+@st.cache_data
+def load_data():
+    data = [
+        {"Case_ID": "DEU-01", "Nombre": "Ley Economía Circular", "Pais": "Alemania", "Replicabilidad": "Alta", "QuickWin": "No", "Tipo": "Regulatorio"},
+        {"Case_ID": "DEU-03", "Nombre": "Ley Envases (EPR)", "Pais": "Alemania", "Replicabilidad": "Alta", "QuickWin": "Sí", "Tipo": "Datos/EPR"},
+        {"Case_ID": "NLD-02", "Nombre": "Green Deals", "Pais": "Países Bajos", "Replicabilidad": "Media", "QuickWin": "Sí", "Tipo": "Cooperación"},
+        {"Case_ID": "NLD-03", "Nombre": "Compra Pública Circular", "Pais": "Países Bajos", "Replicabilidad": "Alta", "QuickWin": "Sí", "Tipo": "Compra Pública"},
+        {"Case_ID": "DNK-02", "Nombre": "Simbiosis Kalundborg", "Pais": "Dinamarca", "Replicabilidad": "Alta", "QuickWin": "Sí", "Tipo": "Cooperación"},
+        {"Case_ID": "ESP-02", "Nombre": "Ley Residuos 7/2022", "Pais": "España", "Replicabilidad": "Alta", "QuickWin": "Sí", "Tipo": "Regulatorio"},
+        {"Case_ID": "COL-02", "Nombre": "Esquema REP Envases", "Pais": "Colombia", "Replicabilidad": "Alta", "QuickWin": "Sí", "Tipo": "Regulatorio"},
+        {"Case_ID": "COL-03", "Nombre": "Impuesto Bolsas Plásticas", "Pais": "Colombia", "Replicabilidad": "Alta", "QuickWin": "Sí", "Tipo": "Económico"},
+    ]
+    df = pd.DataFrame(data)
+    
+    # Mapeo numérico para el Mapa P7
+    # Replicabilidad: Alta=3, Media=2, Baja=1
+    # Impacto (basado en QuickWin): Sí=3, No=1.5 (Estratégico)
+    rep_map = {"Alta": 3, "Media": 2, "Baja": 1}
+    qw_map = {"Sí": 3, "No": 1.5}
+    
+    df['x_score'] = df['Replicabilidad'].map(rep_map)
+    df['y_score'] = df['QuickWin'].map(qw_map)
+    
+    return df
+
+df = load_data()
+
+# 3. HEADER INSTITUCIONAL
+col_logo1, col_logo2 = st.columns([1, 4])
+with col_logo1:
+    st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/a/a4/Logo_del_Ministerio_del_Medio_Ambiente_de_Chile.svg/1200px-Logo_del_Ministerio_del_Medio_Ambiente_de_Chile.svg.png", width=150)
+with col_logo2:
+    st.title("Sistema de Soporte para la Cooperación Internacional en Economía Circular")
+    st.subheader("Visualizador de Hallazgos y Priorización (P7)")
+
+# 4. FILTROS LATERALES
+st.sidebar.header("Filtros de Análisis")
+selected_pais = st.sidebar.multiselect("Seleccionar País", options=df['Pais'].unique(), default=df['Pais'].unique())
+selected_tipo = st.sidebar.multiselect("Tipo de Instrumento", options=df['Tipo'].unique(), default=df['Tipo'].unique())
+
+df_filtered = df[(df['Pais'].isin(selected_pais)) & (df['Tipo'].isin(selected_tipo))]
+
+# 5. MATRIZ P7: MAPA DE PRIORIZACIÓN
+st.header("📌 Mapa P7: Matriz de Priorización Estratégica")
+
+# Creación del gráfico de burbujas/cuadrantes
+fig_p7 = px.scatter(
+    df_filtered, 
+    x="x_score", 
+    y="y_score",
+    text="Case_ID",
+    color="QuickWin",
+    color_discrete_map={"Sí": "#EF3340", "No": "#004488"},
+    size=[15]*len(df_filtered),
+    hover_name="Nombre",
+    labels={"x_score": "Nivel de Replicabilidad (Baja a Alta)", "y_score": "Potencial Quick Win / Impacto"},
+    range_x=[0.5, 3.5],
+    range_y=[0.5, 3.5]
 )
 
-def cargar_datos(file):
-    wb = openpyxl.load_workbook(file, data_only=True)
-    ws = wb['Resumen Cálculo']
+# Añadir líneas de cuadrantes
+fig_p7.add_shape(type="line", x0=2, y0=0.5, x1=2, y1=3.5, line=dict(color="Gray", dash="dash"))
+fig_p7.add_shape(type="line", x0=0.5, y0=2.25, x1=3.5, y1=2.25, line=dict(color="Gray", dash="dash"))
 
-    emisiones_totales = ws['B30'].value
+# Anotaciones de Cuadrantes
+fig_p7.add_annotation(x=3, y=3.2, text="QUICK WINS (Alta Prioridad)", showarrow=False, font=dict(color="#EF3340", size=12))
+fig_p7.add_annotation(x=3, y=0.8, text="ESTRATÉGICOS (Largo Plazo)", showarrow=False, font=dict(color="#004488", size=12))
 
-    indicadores = {}
-    row = 46
-    while ws[f'B{row}'].value is not None:
-        desc = ws[f'A{row}'].value
-        valor = ws[f'B{row}'].value
-        unidad = ws[f'C{row}'].value
-        indicadores[desc] = f"{valor:.2f} {unidad}" if isinstance(valor, (int, float)) else f"{valor} {unidad}"
-        row += 1
-
-    xls = pd.ExcelFile(file)
-    resumen_df = pd.read_excel(xls, sheet_name="Resumen Cálculo", skiprows=2, usecols="A:C")
-    resumen_df.columns = ["Categoria", "Emision_tCO2e", "Porcentaje"]
-    resumen_df["Emision_tCO2e"] = pd.to_numeric(resumen_df["Emision_tCO2e"], errors='coerce')
-
-    emisiones_df = pd.read_excel(xls, sheet_name="Resumen Emisiones", header=1)
-    emisiones_df.rename(columns={"Emisión CO2e\n[t]": "Emisiones (tCO2e)"}, inplace=True)
-    emisiones_df["Emisiones (tCO2e)"] = pd.to_numeric(emisiones_df["Emisiones (tCO2e)"], errors='coerce')
-
-    return emisiones_totales, indicadores, resumen_df, emisiones_df
-
-if uploaded_file:
-    try:
-        emisiones_totales, indicadores, resumen_df, emisiones_df = cargar_datos(uploaded_file)
-    except Exception as e:
-        st.error(f"⚠️ Error al leer archivo: {e}")
-        st.stop()
-else:
-    st.warning("⚠️ Por favor, carga un archivo Excel válido.")
-    st.stop()
-
-st.header("Resultados del Inventario 2024")
-st.metric("Emisiones totales", f"{emisiones_totales:.2f} tCO₂e")
-
-st.subheader("Indicadores de Intensidad Reportados")
-cols = st.columns(len(indicadores))
-for i, (key, val) in enumerate(indicadores.items()):
-    cols[i].metric(key, val)
-
-st.subheader("Distribución de Emisiones por Alcance")
-alcance_map = {
-    "Alcance 1": "Emisiones directas",
-    "Alcance 2": "Emisiones indirectas de energía",
-    "Alcance 3": "Otras emisiones indirectas"
-}
-alcance_colors = {
-    "Alcance 1": "#4CAF50",
-    "Alcance 2": "#2196F3",
-    "Alcance 3": "#FFC107"
-}
-
-alcances_df = resumen_df[
-    resumen_df["Categoria"].astype(str).str.startswith("Alcance", na=False)
-].copy()
-alcances_df["Explicacion"] = alcances_df["Categoria"].map(alcance_map)
-
-fig_alcances = px.bar(
-    alcances_df, x="Categoria", y="Emision_tCO2e",
-    color="Categoria", color_discrete_map=alcance_colors,
-    hover_data={"Categoria": True, "Explicacion": True},
-    title="Emisiones por Alcance (con explicación)"
+fig_p7.update_traces(textposition='top center')
+fig_p7.update_layout(
+    plot_bgcolor='white',
+    height=600,
+    margin=dict(l=20, r=20, t=40, b=20)
 )
-fig_alcances.update_traces(
-    hovertemplate="<b>%{x}</b><br>Emisiones: %{y:.2f} tCO₂e<br>%{customdata[0]}"
-)
-fig_alcances.update_layout(
-    legend_title_text="Alcance",
-    margin=dict(t=50, b=80)
-)
-st.plotly_chart(fig_alcances, use_container_width=True)
 
-st.subheader("Filtrar y Visualizar Emisiones Detalladas")
-alcance_opts = sorted(emisiones_df["Alcance"].dropna().unique())
-cat_opts = sorted(emisiones_df["Categoría"].dropna().unique())
+st.plotly_chart(fig_p7, use_container_width=True)
 
-col1, col2, col3 = st.columns([4, 4, 2])
-with col1:
-    alcance_sel = st.multiselect("Filtrar por Alcance:", alcance_opts, default=alcance_opts)
-with col2:
-    cat_sel = st.multiselect("Filtrar por Categoría:", cat_opts, default=cat_opts)
-with col3:
-    if st.button("🔄 Restaurar filtros"):
-        alcance_sel = alcance_opts
-        cat_sel = cat_opts
+# 6. TABLA DE DETALLES (P2)
+st.header("📊 Detalle de Hallazgos Replicables")
+st.dataframe(df_filtered[["Case_ID", "Nombre", "Pais", "Tipo", "Replicabilidad", "QuickWin"]].sort_values(by="x_score", ascending=False), use_container_width=True)
 
-df_filtrado = emisiones_df[
-    (emisiones_df["Alcance"].isin(alcance_sel)) &
-    (emisiones_df["Categoría"].isin(cat_sel))
-]
-
-fig_detalle = px.bar(
-    df_filtrado, x="Fuente de Emisión", y="Emisiones (tCO2e)",
-    color="Alcance", color_discrete_map=alcance_colors,
-    title="Emisiones Detalladas por Fuente",
-    hover_data={"Alcance": True, "Fuente de Emisión": True, "Emisiones (tCO2e)": True}
-)
-fig_detalle.update_layout(
-    legend_title_text="Alcance",
-    margin=dict(t=50, b=100),
-    xaxis_title="Fuente de Emisión",
-    yaxis_title="Emisiones (tCO₂e)"
-)
-st.plotly_chart(fig_detalle, use_container_width=True)
-
-st.dataframe(df_filtrado, use_container_width=True)
-
-csv_data = df_filtrado.to_csv(index=False).encode('utf-8')
-st.download_button("💾 Exportar datos filtrados a CSV", csv_data, "emisiones_filtradas.csv", "text/csv")
-
+# 7. FOOTER
 st.markdown("---")
-st.image("sustrend_logo.png", use_container_width=False, width=200)
-st.markdown("<center><em>Dashboard elaborado por Sustrend - Datos Programa HuellaChile</em></center>", unsafe_allow_html=True)
+st.caption("Generado para el Ministerio del Medio Ambiente - Consultoría Sustrend 2024. Los datos cumplen con la trazabilidad de fuentes primarias y secundarias.")
