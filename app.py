@@ -11,7 +11,45 @@ st.markdown("""
     <style>
     .main { background-color: #f5f7f9; }
     h1 { color: #004488; font-family: 'Arial'; border-bottom: 3px solid #EF3340; }
-    .stMetric { background-color: #ffffff; border: 1px solid #004488; }
+    
+    /* Quitar bordes de las métricas */
+    div[data-testid="stMetric"] {
+        background-color: transparent;
+        border: none;
+        padding: 0;
+    }
+    
+    /* Estilo para los labels de métricas */
+    div[data-testid="stMetricLabel"] {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333333;
+        font-family: 'Arial';
+    }
+    
+    /* Estilo para los valores de métricas */
+    div[data-testid="stMetricValue"] {
+        font-size: 32px;
+        font-weight: bold;
+        font-family: 'Arial';
+    }
+    
+    /* Estilo específico para Quick Wins */
+    div[data-testid="stMetric"]:has(div[data-testid="stMetricLabel"]:contains("Quick Wins")) div[data-testid="stMetricValue"] {
+        color: #27AE60;
+    }
+    
+    /* Estilo específico para Estratégicos */
+    div[data-testid="stMetric"]:has(div[data-testid="stMetricLabel"]:contains("Estratégicos")) div[data-testid="stMetricValue"] {
+        color: #004488;
+    }
+    
+    /* Estilo específico para Tácticos */
+    div[data-testid="stMetric"]:has(div[data-testid="stMetricLabel"]:contains("Tácticos")) div[data-testid="stMetricValue"] {
+        color: #F39C12;
+    }
+    
+    .stMetric { background-color: transparent; border: none; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -245,21 +283,50 @@ try:
 
     st.plotly_chart(fig, use_container_width=True)
 
-    # Sección de métricas resumen
+    # Sección de métricas resumen SIN recuadros
     st.subheader("Resumen de Clasificaciones")
+    
     col1, col2, col3 = st.columns(3)
     
     with col1:
         quick_wins = len(df_filtered[df_filtered['Clasificación'] == '🟢 Quick Win'])
-        st.metric("Quick Wins", quick_wins)
+        # Usamos markdown para crear una visualización limpia sin recuadros
+        st.markdown(f"""
+        <div style="text-align: center; padding: 20px 0;">
+            <div style="font-size: 14px; font-weight: bold; color: #333333; margin-bottom: 8px;">
+                Quick Wins
+            </div>
+            <div style="font-size: 32px; font-weight: bold; color: #27AE60;">
+                {quick_wins}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     
     with col2:
         estrategicos = len(df_filtered[df_filtered['Clasificación'] == '🔵 Estratégico'])
-        st.metric("Estratégicos", estrategicos)
+        st.markdown(f"""
+        <div style="text-align: center; padding: 20px 0;">
+            <div style="font-size: 14px; font-weight: bold; color: #333333; margin-bottom: 8px;">
+                Estratégicos
+            </div>
+            <div style="font-size: 32px; font-weight: bold; color: #004488;">
+                {estrategicos}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     
     with col3:
         tacticos = len(df_filtered[df_filtered['Clasificación'] == '🟡 Táctico'])
-        st.metric("Tácticos", tacticos)
+        st.markdown(f"""
+        <div style="text-align: center; padding: 20px 0;">
+            <div style="font-size: 14px; font-weight: bold; color: #333333; margin-bottom: 8px;">
+                Tácticos
+            </div>
+            <div style="font-size: 32px; font-weight: bold; color: #F39C12;">
+                {tacticos}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
     # Tabla de datos detallada
     st.subheader("Ficha Técnica de Instrumentos")
