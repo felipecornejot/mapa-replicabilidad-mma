@@ -2,11 +2,16 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from pathlib import Path
 
 # Configuración de página con estilo institucional
-st.set_page_config(page_title="Dashboard P7 - Sustrend & MMA", layout="wide")
+st.set_page_config(
+    page_title="Mapa de Replicabilidad - MMA", 
+    layout="wide",
+    page_icon="🌍"
+)
 
-# ESTILO CSS - FONDO BLANCO LIMPIO SIN OCULTAR ELEMENTOS
+# ESTILO CSS - FONDO BLANCO LIMPIO CON FILTROS TRANSPARENTES
 st.markdown("""
     <style>
     /* ===== FONDO BLANCO PARA LA PÁGINA PRINCIPAL ===== */
@@ -22,7 +27,7 @@ st.markdown("""
     /* Fondo blanco para el contenedor de bloque */
     .block-container {
         background-color: white !important;
-        padding-top: 2rem !important;
+        padding-top: 1rem !important;
     }
     
     /* Estilos para encabezados en azul marino */
@@ -33,18 +38,18 @@ st.markdown("""
     }
     
     h1 {
-        font-size: 28px !important;
+        font-size: 32px !important;
         font-weight: 600 !important;
         border-bottom: 2px solid #0f69b4 !important;
         padding-bottom: 10px !important;
-        margin-bottom: 20px !important;
+        margin-bottom: 15px !important;
     }
     
     h2 {
         font-size: 22px !important;
         font-weight: 500 !important;
-        margin-top: 25px !important;
-        margin-bottom: 15px !important;
+        margin-top: 20px !important;
+        margin-bottom: 10px !important;
     }
     
     h3 {
@@ -61,14 +66,39 @@ st.markdown("""
         color: #0f69b4 !important;
     }
     
-    /* Inputs y selectores */
+    /* ===== FILTROS TRANSPARENTES ===== */
+    /* Contenedor principal de los filtros */
+    div[data-testid="stHorizontalBlock"] {
+        background-color: transparent !important;
+    }
+    
+    /* Labels de filtros */
     .stSelectbox label, .stMultiselect label {
         color: #0f69b4 !important;
         font-weight: 500 !important;
+        font-size: 14px !important;
+        background-color: transparent !important;
     }
     
-    /* Widgets con fondo blanco */
-    .stSelectbox > div, .stMultiselect > div {
+    /* Widgets de selección - HACER TRANSPARENTES */
+    div[data-baseweb="select"] > div,
+    div[data-baseweb="popover"],
+    div[data-baseweb="input"] {
+        background-color: transparent !important;
+        border: 1px solid #0f69b4 !important;
+        border-radius: 4px !important;
+    }
+    
+    /* Texto dentro de los filtros */
+    div[data-baseweb="select"] span,
+    div[data-baseweb="input"] input {
+        color: #0f69b4 !important;
+        background-color: transparent !important;
+    }
+    
+    /* Opciones del dropdown */
+    div[role="listbox"] li {
+        color: #0f69b4 !important;
         background-color: white !important;
     }
     
@@ -165,6 +195,22 @@ st.markdown("""
         background-color: transparent !important;
     }
     
+    /* Asegurar que los emojis de banderas sean visibles */
+    .st-emotion-cache-16idsys span {
+        background-color: transparent !important;
+    }
+    
+    /* Inputs transparentes */
+    input, select, textarea {
+        background-color: transparent !important;
+    }
+    
+    /* Placeholder color */
+    ::placeholder {
+        color: #0f69b4 !important;
+        opacity: 0.7 !important;
+    }
+    
     </style>
     """, unsafe_allow_html=True)
 
@@ -180,7 +226,7 @@ try:
     st.title("Mapa de Replicabilidad de Instrumentos Internacionales")
     st.caption("Consultoría Sustrend para la Subsecretaría del Medio Ambiente | ID: 608897-205-COT25")
 
-    # FILTROS INTERACTIVOS
+    # FILTROS INTERACTIVOS CON ESTILO TRANSPARENTE
     st.markdown("### Filtros de Análisis")
     col1, col2 = st.columns(2)
     with col1:
@@ -238,21 +284,21 @@ try:
         }
     )
 
-    # LÍNEAS DE UMBRAL
+    # LÍNEAS DE UMBRAL - CAMBIADO A ROJO GOBIERNO (#eb3c46)
     fig.add_vline(
         x=3, 
         line_dash="dash",
-        line_width=1.5,
-        line_color="#0f69b4",
-        opacity=0.7
+        line_width=1.8,  # Un poco más grueso para mejor visibilidad
+        line_color="#eb3c46",  # ROJO GOBIERNO (#eb3c46)
+        opacity=0.8
     )
     
     fig.add_hline(
         y=3, 
         line_dash="dash",
-        line_width=1.5,
-        line_color="#0f69b4",
-        opacity=0.7
+        line_width=1.8,  # Un poco más grueso para mejor visibilidad
+        line_color="#eb3c46",  # ROJO GOBIERNO (#eb3c46)
+        opacity=0.8
     )
 
     # ESTILO DE PUNTOS
@@ -395,14 +441,14 @@ try:
     for label in quadrant_labels:
         fig.add_annotation(**label)
 
-    # ETIQUETAS DE UMBRAL
+    # ETIQUETAS DE UMBRAL - EN ROJO GOBIERNO
     fig.add_annotation(
         x=3, y=5.4,
         text="<b>Umbral Factibilidad</b>",
         showarrow=False,
-        font=dict(size=10, color="#0f69b4", family="Arial"),
+        font=dict(size=10, color="#eb3c46", family="Arial", weight="bold"),
         bgcolor="white",
-        bordercolor="#0f69b4",
+        bordercolor="#eb3c46",
         borderwidth=0.8,
         borderpad=4,
         xanchor="center",
@@ -413,9 +459,9 @@ try:
         x=5.4, y=3,
         text="<b>Umbral Impacto</b>",
         showarrow=False,
-        font=dict(size=10, color="#0f69b4", family="Arial"),
+        font=dict(size=10, color="#eb3c46", family="Arial", weight="bold"),
         bgcolor="white",
-        bordercolor="#0f69b4",
+        bordercolor="#eb3c46",
         borderwidth=0.8,
         borderpad=4,
         xanchor="left",
@@ -498,15 +544,30 @@ try:
         }
     )
 
-    # ========== PIE DE PÁGINA ==========
+    # ========== PIE DE PÁGINA CON MEMBRETE DEL GOBIERNO ==========
     st.divider()
-    st.markdown(
-        "<div style='text-align: center; color: #0f69b4; font-size: 12px;'>"
-        "Dashboard P7 - Mapa de Replicabilidad de Instrumentos Internacionales | "
-        "Consultoría Sustrend para el Ministerio del Medio Ambiente de Chile"
-        "</div>",
-        unsafe_allow_html=True
-    )
+    
+    # Verificar si existe la imagen del membrete
+    membrete_path = Path("membrete.png")
+    
+    if membrete_path.exists():
+        # Mostrar el membrete como imagen
+        st.image(
+            "membrete.png", 
+            use_container_width=True,
+            caption=""
+        )
+    else:
+        # Si no existe la imagen, mostrar un membrete en texto
+        st.markdown("""
+        <div style="text-align: center; color: #0f69b4; font-size: 14px; margin-top: 30px;">
+            <hr style="border: 1px solid #0f69b4; margin: 20px 0;">
+            <p style="font-weight: bold; font-size: 16px;">Gobierno de Chile</p>
+            <p style="font-size: 14px;">Ministerio del Medio Ambiente</p>
+            <p style="font-size: 12px; opacity: 0.8;">Subsecretaría del Medio Ambiente</p>
+            <p style="font-size: 11px; opacity: 0.6;">Dashboard - Mapa de Replicabilidad de Instrumentos Internacionales</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 except Exception as e:
     st.error(f"Error cargando el Dashboard: {e}")
