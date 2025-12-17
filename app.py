@@ -24,7 +24,7 @@ try:
     df = load_data()
 
     # Encabezado con logos e identificación
-    st.title("Mapa de Replicabilidad de Instrumentos Internacionales (P7)")
+    st.title("Mapa de Replicabilidad de Instrumentos Internacionales")
     st.caption("Consultoría Sustrend para la Subsecretaría del Medio Ambiente | ID: 608897-205-COT25")
 
     # Filtros interactivos (Interoperabilidad)
@@ -62,7 +62,7 @@ try:
         plot_bgcolor='white',
         xaxis=dict(range=[0.5, 5.5], gridcolor='#e5e5e5'),
         yaxis=dict(range=[0.5, 5.5], gridcolor='#e5e5e5'),
-        legend_title_text="Clasificación P7"
+        legend_title_text="Clasificación"
     )
 
     st.plotly_chart(fig, use_container_width=True)
