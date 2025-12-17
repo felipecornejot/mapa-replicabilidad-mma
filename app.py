@@ -80,17 +80,18 @@ try:
         x=3, 
         line_dash="solid",  # Cambiado a sólido para mejor visibilidad
         line_width=2.5,     # Más grueso
-        line_color="#2C3E50",  # Negro/azul oscuro
-        opacity=0.7,
+        line_color="#000000",  # NEGRO
+        opacity=0.9,
         annotation=dict(
             text="Umbral Factibilidad",
             textangle=0,
             yanchor="top",
             y=1.02,  # Mover hacia arriba
             xanchor="center",
-            font=dict(size=12, color="#2C3E50", family="Arial"),
+            font=dict(size=12, color="#000000", family="Arial", weight="bold"),  # NEGRO
             bgcolor="white",
-            borderpad=4
+            borderpad=4,
+            bordercolor="#000000"
         )
     )
     
@@ -98,17 +99,18 @@ try:
         y=3, 
         line_dash="solid",  # Cambiado a sólido
         line_width=2.5,     # Más grueso
-        line_color="#2C3E50",  # Negro/azul oscuro
-        opacity=0.7,
+        line_color="#000000",  # NEGRO
+        opacity=0.9,
         annotation=dict(
             text="Umbral Impacto",
             textangle=0,
             xanchor="right",
             x=1.02,  # Mover hacia la derecha
             yanchor="middle",
-            font=dict(size=12, color="#2C3E50", family="Arial"),
+            font=dict(size=12, color="#000000", family="Arial", weight="bold"),  # NEGRO
             bgcolor="white",
-            borderpad=4
+            borderpad=4,
+            bordercolor="#000000"
         )
     )
 
@@ -118,7 +120,7 @@ try:
         marker=dict(
             line=dict(width=1, color='DarkSlateGrey')  # Borde para los puntos
         ),
-        textfont=dict(size=10, family="Arial"),
+        textfont=dict(size=10, family="Arial", color="#000000"),  # Texto negro
         hovertemplate="<b>%{hovertext}</b><br><br>" +
                       "País: %{customdata[0]}<br>" +
                       "Categoría: %{customdata[1]}<br>" +
@@ -137,31 +139,36 @@ try:
             gridcolor='#e0e0e0',
             gridwidth=1,
             showline=True,
-            linecolor='#b0b0b0',
-            linewidth=1,
-            title_font=dict(size=14, family="Arial", color="#2C3E50"),
-            tickfont=dict(size=12, family="Arial")
+            linecolor='#000000',  # Eje X en negro
+            linewidth=2,
+            title_font=dict(size=14, family="Arial", color="#000000", weight="bold"),  # Título eje X negro
+            tickfont=dict(size=12, family="Arial", color="#000000"),  # Números del eje X negro
+            title_text="Factibilidad en Chile (1-5)"  # Título explícito
         ),
         yaxis=dict(
             range=[0.5, 5.5], 
             gridcolor='#e0e0e0',
             gridwidth=1,
             showline=True,
-            linecolor='#b0b0b0',
-            linewidth=1,
-            title_font=dict(size=14, family="Arial", color="#2C3E50"),
-            tickfont=dict(size=12, family="Arial")
+            linecolor='#000000',  # Eje Y en negro
+            linewidth=2,
+            title_font=dict(size=14, family="Arial", color="#000000", weight="bold"),  # Título eje Y negro
+            tickfont=dict(size=12, family="Arial", color="#000000"),  # Números del eje Y negro
+            title_text="Impacto Ambiental (1-5)"  # Título explícito
         ),
         legend=dict(
-            title=dict(text="<b>Clasificación</b>", font=dict(size=12, family="Arial")),
-            font=dict(size=11, family="Arial"),
-            bordercolor="#e0e0e0",
+            title=dict(
+                text="<b>Clasificación</b>", 
+                font=dict(size=12, family="Arial", color="#000000")  # Título leyenda negro
+            ),
+            font=dict(size=11, family="Arial", color="#000000"),  # Texto leyenda negro
+            bordercolor="#000000",  # Borde negro
             borderwidth=1,
             bgcolor="rgba(255,255,255,0.9)"
         ),
         title=dict(
-            text="<b>Mapa de Replicabilidad - Análisis P7</b>",
-            font=dict(size=18, family="Arial", color="#004488"),
+            text="<b>Análisis Mapa de Replicabilidad</b>",  # Título simplificado
+            font=dict(size=20, family="Arial", color="#000000", weight="bold"),  # Título en negro
             x=0.5,
             xanchor='center'
         ),
@@ -169,11 +176,12 @@ try:
             bgcolor="white",
             font_size=12,
             font_family="Arial",
-            bordercolor="#2C3E50"
+            font_color="#000000",  # Texto hover negro
+            bordercolor="#000000"
         ),
-        margin=dict(l=20, r=20, t=60, b=20),  # Mejor distribución
+        margin=dict(l=60, r=60, t=80, b=60),  # Margenes ajustados para mejor visibilidad
         width=None,  # Usará el ancho del contenedor
-        height=600   # Altura fija para mejor aspecto
+        height=650   # Altura fija para mejor aspecto
     )
 
     # Añadir cuadrantes con colores de fondo sutiles
@@ -197,20 +205,24 @@ try:
                   fillcolor="rgba(243, 156, 18, 0.03)",  # Naranja muy tenue
                   line=dict(width=0))
 
-    # Añadir etiquetas de cuadrantes
+    # Añadir etiquetas de cuadrantes en negro
     quadrant_labels = [
         dict(x=1.75, y=4.5, text="<b>Quick Wins</b><br>(Alto Impacto, Baja Factibilidad)", 
-             font=dict(size=10, color="#27AE60"), showarrow=False),
+             font=dict(size=10, color="#000000"), showarrow=False),  # Negro
         dict(x=4.25, y=4.5, text="<b>Estratégicos</b><br>(Alto Impacto, Alta Factibilidad)", 
-             font=dict(size=10, color="#2C3E50"), showarrow=False),
+             font=dict(size=10, color="#000000"), showarrow=False),  # Negro
         dict(x=1.75, y=1.75, text="<b>Baja Prioridad</b><br>(Bajo Impacto, Baja Factibilidad)", 
-             font=dict(size=10, color="#95A5A6"), showarrow=False),
+             font=dict(size=10, color="#000000"), showarrow=False),  # Negro
         dict(x=4.25, y=1.75, text="<b>Tácticos</b><br>(Bajo Impacto, Alta Factibilidad)", 
-             font=dict(size=10, color="#F39C12"), showarrow=False)
+             font=dict(size=10, color="#000000"), showarrow=False)   # Negro
     ]
     
     for label in quadrant_labels:
         fig.add_annotation(**label)
+
+    # Asegurar que los ticks también sean visibles
+    fig.update_xaxes(ticks="outside", tickcolor="#000000", ticklen=6)
+    fig.update_yaxes(ticks="outside", tickcolor="#000000", ticklen=6)
 
     st.plotly_chart(fig, use_container_width=True)
 
