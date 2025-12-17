@@ -467,4 +467,3 @@ Clasificación estratégica:
 except Exception as e:
     st.error(f"Error cargando el Dashboard: {e}")
     st.warning("Verifica que el nombre del archivo CSV sea: P7 Mapa de Replicabilidad Chile - Tabla de resultados procesados.csv")
-
