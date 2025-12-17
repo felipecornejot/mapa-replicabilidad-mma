@@ -6,27 +6,124 @@ import plotly.graph_objects as go
 # Configuración de página con estilo institucional
 st.set_page_config(page_title="Dashboard P7 - Sustrend & MMA", layout="wide")
 
-# Estilo CSS minimalista
+# ESTILO CSS - FONDO BLANCO COMPLETO Y TEXTO AZUL MARINO (#0f69b4)
 st.markdown("""
     <style>
-    .main { background-color: white; }
-    h1 { 
-        color: #183a68; 
-        font-family: 'Calibri, Arial'; 
-        font-size: 28px;
-        font-weight: 600;
-        border-bottom: 2px solid #eb3c46;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
+    /* Fondo blanco completo para toda la página */
+    .main { 
+        background-color: white !important;
     }
-    h2, h3 { 
-        color: #4e4e4c; 
-        font-family: 'Calibri, Arial';
-        font-weight: 500;
+    
+    /* Estilos para encabezados en azul marino */
+    h1, h2, h3, h4, h5, h6 {
+        color: #0f69b4 !important;
+        font-family: 'Arial', sans-serif !important;
     }
-    .st-emotion-cache-16txtl3 {
-        padding-top: 2rem;
+    
+    h1 {
+        font-size: 28px !important;
+        font-weight: 600 !important;
+        border-bottom: 2px solid #0f69b4 !important;
+        padding-bottom: 10px !important;
+        margin-bottom: 20px !important;
     }
+    
+    h2 {
+        font-size: 22px !important;
+        font-weight: 500 !important;
+        margin-top: 25px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    h3 {
+        font-size: 18px !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Texto general en azul marino */
+    .stText, .stMarkdown, .stCaption, p, div, span {
+        color: #0f69b4 !important;
+    }
+    
+    /* Inputs y selectores */
+    .stSelectbox label, .stMultiselect label {
+        color: #0f69b4 !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Tabla */
+    .stDataFrame {
+        border: 1px solid #e0e0e0 !important;
+        border-radius: 4px !important;
+    }
+    
+    /* Divisores */
+    .stDivider {
+        border-color: #e0e0e0 !important;
+    }
+    
+    /* Widget containers */
+    .stWidget > div {
+        background-color: white !important;
+    }
+    
+    /* Quitar bordes de las métricas */
+    div[data-testid="stMetric"] {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+    
+    /* Estilo para los labels de métricas en azul marino */
+    div[data-testid="stMetricLabel"] {
+        font-size: 14px !important;
+        font-weight: bold !important;
+        color: #0f69b4 !important;
+        font-family: 'Arial', sans-serif !important;
+    }
+    
+    /* Estilo para los valores de métricas */
+    div[data-testid="stMetricValue"] {
+        font-size: 32px !important;
+        font-weight: bold !important;
+        font-family: 'Arial', sans-serif !important;
+    }
+    
+    /* Estilo específico para Quick Wins - mantenemos el verde */
+    div[data-testid="stMetric"]:has(div[data-testid="stMetricLabel"]:contains("Quick Wins")) div[data-testid="stMetricValue"] {
+        color: #27AE60 !important;
+    }
+    
+    /* Estilo específico para Estratégicos - en azul marino */
+    div[data-testid="stMetric"]:has(div[data-testid="stMetricLabel"]:contains("Estratégicos")) div[data-testid="stMetricValue"] {
+        color: #0f69b4 !important;
+    }
+    
+    /* Estilo específico para Tácticos - mantenemos el amarillo */
+    div[data-testid="stMetric"]:has(div[data-testid="stMetricLabel"]:contains("Tácticos")) div[data-testid="stMetricValue"] {
+        color: #F39C12 !important;
+    }
+    
+    /* Scrollbar personalizado */
+    ::-webkit-scrollbar {
+        width: 8px !important;
+        height: 8px !important;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1 !important;
+        border-radius: 4px !important;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #0f69b4 !important;
+        border-radius: 4px !important;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #0c5490 !important;
+    }
+    
     </style>
     """, unsafe_allow_html=True)
 
@@ -38,297 +135,365 @@ def load_data():
 try:
     df = load_data()
 
-    # Encabezado limpio
-    col_title, col_logo = st.columns([4, 1])
-    with col_title:
-        st.title("Análisis Mapa de Replicabilidad")
-        st.caption("Consultoría Sustrend | MMA Chile | ID: 608897-205-COT25")
+    # ENCABEZADO CON TEXTO AZUL MARINO
+    st.title("Mapa de Replicabilidad de Instrumentos Internacionales")
+    st.caption("Consultoría Sustrend para la Subsecretaría del Medio Ambiente | ID: 608897-205-COT25")
 
-    # Filtros en línea minimalistas
-    st.divider()
+    # FILTROS INTERACTIVOS - TEXTO AZUL MARINO
+    st.markdown("### Filtros de Análisis")
     col1, col2 = st.columns(2)
     with col1:
         filtro_pais = st.multiselect(
-            "País de Origen", 
+            "Seleccionar País de Origen", 
             options=df['País Origen (P2)'].unique(), 
             default=df['País Origen (P2)'].unique(),
-            placeholder="Seleccionar países..."
+            help="Filtra los instrumentos por país de origen"
         )
     with col2:
         filtro_clase = st.multiselect(
-            "Clasificación", 
+            "Seleccionar Clasificación Estratégica", 
             options=df['Clasificación'].unique(), 
             default=df['Clasificación'].unique(),
-            placeholder="Seleccionar clasificaciones..."
+            help="Filtra los instrumentos por clasificación estratégica"
         )
 
     df_filtered = df[(df['País Origen (P2)'].isin(filtro_pais)) & 
                      (df['Clasificación'].isin(filtro_clase))]
 
-    # Convertir clasificaciones a nombres más cortos para el gráfico
-    df_filtered = df_filtered.copy()
-    df_filtered['Clasif_Corta'] = df_filtered['Clasificación'].replace({
-        '🟢 Quick Win': 'Quick Win',
-        '🔵 Estratégico': 'Estratégico', 
-        '🟡 Táctico': 'Táctico'
-    })
+    # CONFIGURACIÓN DE TAMAÑOS DE PUNTOS
+    df_filtered['Size'] = 25  # Tamaño base
+    df_filtered.loc[df_filtered['Clasificación'] == '🔵 Estratégico', 'Size'] = 35
+    df_filtered.loc[df_filtered['Clasificación'] == '🟢 Quick Win', 'Size'] = 30
 
-    # Crear tamaño para los puntos (basado en importancia)
-    df_filtered['Tamaño'] = 20  # Base
-    df_filtered.loc[df_filtered['Clasificación'] == '🔵 Estratégico', 'Tamaño'] = 35
-    df_filtered.loc[df_filtered['Clasificación'] == '🟢 Quick Win', 'Tamaño'] = 30
-    df_filtered.loc[df_filtered['Clasificación'] == '🟡 Táctico', 'Tamaño'] = 25
-
-    # Gráfico principal - estilo minimalista inspirado en la referencia
+    # ========== GRÁFICO PRINCIPAL ==========
+    st.markdown("### Análisis de Replicabilidad")
+    
     fig = px.scatter(
-        df_filtered,
-        x="Score Factib. Chile",
+        df_filtered, 
+        x="Score Factib. Chile", 
         y="Score Impacto (1-5)",
-        size="Tamaño",
-        color="Clasif_Corta",
+        text="ID (P2)",
+        color="Clasificación",
         hover_name="Instrumento (Nombre Original/Local)",
         hover_data={
             "País Origen (P2)": True,
             "Categoría (P2)": True,
+            "KPI Principal Afectado (P5)": True,
             "Score Factib. Chile": ":.1f",
             "Score Impacto (1-5)": ":.1f"
         },
-        size_max=45,
-        color_discrete_sequence=["#0f69b4", "#eb3c46", "#183a68"]  # Azul, Rojo, Azul oscuro
+        size="Size",
+        size_max=38,
+        opacity=0.85,
+        color_discrete_map={
+            "🟢 Quick Win": "#27AE60",  # Verde institucional
+            "🔵 Estratégico": "#0f69b4",  # AZUL MARINO (#0f69b4)
+            "🟡 Táctico": "#F39C12"   # Amarillo
+        },
+        labels={
+            "Score Factib. Chile": "Factibilidad en Chile (1-5)", 
+            "Score Impacto (1-5)": "Impacto Ambiental (1-5)"
+        }
     )
 
-    # Líneas de cuadrantes - estilo punto discreto
-    x0, y0 = 3, 3
+    # LÍNEAS DE UMBRAL
     fig.add_vline(
-        x=x0, 
-        line_width=1.2, 
-        line_dash="dot", 
-        opacity=0.55, 
-        line_color="#4e4e4c"
+        x=3, 
+        line_dash="dash",
+        line_width=1.5,
+        line_color="#0f69b4",  # AZUL MARINO
+        opacity=0.7
     )
+    
     fig.add_hline(
-        y=y0, 
-        line_width=1.2, 
-        line_dash="dot", 
-        opacity=0.55, 
-        line_color="#4e4e4c"
+        y=3, 
+        line_dash="dash",
+        line_width=1.5,
+        line_color="#0f69b4",  # AZUL MARINO
+        opacity=0.7
     )
 
-    # Estética clara - opacidad y bordes suaves
+    # ESTILO DE PUNTOS
     fig.update_traces(
+        textposition='top center',
         marker=dict(
-            opacity=0.82, 
-            line=dict(width=1.2, color="rgba(255,255,255,0.95)"),
-            sizemode='diameter'
+            line=dict(width=0.8, color='rgba(255,255,255,0.8)')  # Borde blanco para contraste
         ),
-        textfont=dict(family="Calibri, Arial", size=10, color="#4e4e4c"),
-        hovertemplate=(
-            "<b>%{hovertext}</b><br>"
-            "Factibilidad: %{x:.1f} | Impacto: %{y:.1f}<br>"
-            "País: %{customdata[0]}<br>"
-            "Categoría: %{customdata[1]}<br>"
-            "<extra></extra>"
-        )
+        textfont=dict(size=9, family="Arial", color="#0f69b4"),  # Texto azul marino
+        hovertemplate="<b>%{hovertext}</b><br>" +
+                      "Factibilidad: %{x:.1f} | Impacto: %{y:.1f}<br>" +
+                      "País: %{customdata[0]}<br>" +
+                      "Categoría: %{customdata[1]}<br>" +
+                      "KPI: %{customdata[2]}<br>" +
+                      "<extra></extra>"
     )
 
-    # Layout minimalista tipo "simple_white"
+    # LAYOUT DEL GRÁFICO
     fig.update_layout(
-        template="simple_white",
-        paper_bgcolor="white",
-        plot_bgcolor="white",
-        font=dict(family="Calibri, Arial", size=13, color="#4e4e4c"),
-        margin=dict(l=65, r=35, t=60, b=65),
-        legend_title_text="",
+        plot_bgcolor='white',
+        paper_bgcolor='white',
+        xaxis=dict(
+            range=[0.5, 5.5], 
+            gridcolor='rgba(15, 105, 180, 0.08)',  # Grid azul muy sutil
+            gridwidth=0.5,
+            showline=True,
+            linecolor='#0f69b4',  # Eje en azul marino
+            linewidth=1.2,
+            showgrid=True,
+            zeroline=False,
+            title_font=dict(size=13, family="Arial", color="#0f69b4", weight="bold"),
+            tickfont=dict(size=11, family="Arial", color="#0f69b4"),
+            tickmode='linear',
+            tick0=1,
+            dtick=1,
+            ticks="outside",
+            ticklen=4,
+            tickcolor='#0f69b4',
+            title_text="Factibilidad en Chile (1-5)"
+        ),
+        yaxis=dict(
+            range=[0.5, 5.5], 
+            gridcolor='rgba(15, 105, 180, 0.08)',  # Grid azul muy sutil
+            gridwidth=0.5,
+            showline=True,
+            linecolor='#0f69b4',  # Eje en azul marino
+            linewidth=1.2,
+            showgrid=True,
+            zeroline=False,
+            title_font=dict(size=13, family="Arial", color="#0f69b4", weight="bold"),
+            tickfont=dict(size=11, family="Arial", color="#0f69b4"),
+            tickmode='linear',
+            tick0=1,
+            dtick=1,
+            ticks="outside",
+            ticklen=4,
+            tickcolor='#0f69b4',
+            title_text="Impacto Ambiental (1-5)"
+        ),
         legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=-0.25,
-            xanchor="center",
-            x=0.5,
-            font=dict(size=12),
-            itemclick="toggleothers",
-            itemdoubleclick="toggle"
+            title=dict(
+                text="Clasificación", 
+                font=dict(size=12, family="Arial", color="#0f69b4")  # Texto azul marino
+            ),
+            font=dict(size=11, family="Arial", color="#0f69b4"),  # Texto azul marino
+            bordercolor="#0f69b4",  # Borde azul marino
+            borderwidth=0.8,
+            bgcolor="rgba(255,255,255,0.9)",
+            x=1.02,
+            xanchor="left",
+            y=1,
+            yanchor="top"
         ),
         title=dict(
-            text="",
-            font=dict(size=16, color="#183a68", family="Calibri, Arial")
+            text="",  # Eliminamos título aquí, ya lo ponemos con st.markdown
+            font=dict(size=16, family="Arial", color="#0f69b4", weight="normal"),
+            x=0.5,
+            xanchor='center',
+            y=0.95
         ),
         hoverlabel=dict(
             bgcolor="white",
-            font_size=12,
-            font_family="Calibri, Arial",
-            font_color="#4e4e4c",
-            bordercolor="#e1e1e1"
-        )
+            font_size=11,
+            font_family="Arial",
+            font_color="#0f69b4",  # Texto azul marino
+            bordercolor="#0f69b4"   # Borde azul marino
+        ),
+        margin=dict(l=60, r=60, t=40, b=60),
+        width=None,
+        height=550,
+        showlegend=True
     )
 
-    # Ejes 1–5 con ticks enteros
-    ticks = [1, 2, 3, 4, 5]
-    fig.update_xaxes(
-        title="Factibilidad en Chile (1–5)",
-        range=[0.8, 5.2],
-        tickmode="array", 
-        tickvals=ticks,
-        gridcolor="rgba(233,233,233,0.9)",
-        linecolor="#c9c9c9",
-        linewidth=1,
-        showgrid=True,
-        zeroline=False,
-        tickfont=dict(size=12),
-        title_font=dict(size=13, color="#4e4e4c")
-    )
+    # CUADRANTES CON COLORES SUTILES
+    fig.add_shape(type="rect",
+                  x0=0.5, y0=3, x1=3, y1=5.5,
+                  fillcolor="rgba(39, 174, 96, 0.05)",  # Quick Wins - verde tenue
+                  line=dict(width=0),
+                  layer="below")
     
-    fig.update_yaxes(
-        title="Impacto Ambiental (1–5)",
-        range=[0.8, 5.2],
-        tickmode="array", 
-        tickvals=ticks,
-        gridcolor="rgba(233,233,233,0.9)",
-        linecolor="#c9c9c9",
-        linewidth=1,
-        showgrid=True,
-        zeroline=False,
-        tickfont=dict(size=12),
-        title_font=dict(size=13, color="#4e4e4c")
-    )
+    fig.add_shape(type="rect",
+                  x0=3, y0=3, x1=5.5, y1=5.5,
+                  fillcolor="rgba(15, 105, 180, 0.05)",  # Estratégicos - azul marino tenue
+                  line=dict(width=0),
+                  layer="below")
+    
+    fig.add_shape(type="rect",
+                  x0=0.5, y0=0.5, x1=3, y1=3,
+                  fillcolor="rgba(243, 156, 18, 0.04)",  # Tácticos - amarillo tenue
+                  line=dict(width=0),
+                  layer="below")
 
-    # Títulos de cuadrantes (posición similar a la referencia)
-    quadrant_annotations = [
+    # ETIQUETAS DE CUADRANTES
+    quadrant_labels = [
         dict(
-            x=4.2, y=4.6, 
-            text="<b>Alto Impacto<br>Alta Factibilidad</b>",
+            x=1.75, y=4.5, 
+            text="QUICK WINS", 
+            font=dict(size=10, family="Arial", color="#27AE60", weight="bold"), 
             showarrow=False,
-            font=dict(size=11, color="#183a68", family="Calibri, Arial"),
-            align="center",
-            bgcolor="rgba(255,255,255,0.7)",
-            bordercolor="#e1e1e1",
-            borderwidth=1,
-            borderpad=4
+            bgcolor="rgba(255,255,255,0.85)",
+            bordercolor="#27AE60",
+            borderwidth=0.5,
+            borderpad=3
         ),
         dict(
-            x=1.8, y=4.6, 
-            text="<b>Alto Impacto<br>Baja Factibilidad</b>",
+            x=4.25, y=4.5, 
+            text="ESTRATÉGICOS", 
+            font=dict(size=10, family="Arial", color="#0f69b4", weight="bold"),  # Azul marino
             showarrow=False,
-            font=dict(size=11, color="#0f69b4", family="Calibri, Arial"),
-            align="center",
-            bgcolor="rgba(255,255,255,0.7)",
-            bordercolor="#e1e1e1",
-            borderwidth=1,
-            borderpad=4
+            bgcolor="rgba(255,255,255,0.85)",
+            bordercolor="#0f69b4",
+            borderwidth=0.5,
+            borderpad=3
         ),
         dict(
-            x=1.8, y=1.4, 
-            text="<b>Bajo Impacto<br>Baja Factibilidad</b>",
+            x=4.25, y=1.75, 
+            text="TÁCTICOS", 
+            font=dict(size=10, family="Arial", color="#F39C12", weight="bold"), 
             showarrow=False,
-            font=dict(size=11, color="#4e4e4c", family="Calibri, Arial"),
-            align="center",
-            bgcolor="rgba(255,255,255,0.7)",
-            bordercolor="#e1e1e1",
-            borderwidth=1,
-            borderpad=4
-        ),
-        dict(
-            x=4.2, y=1.4, 
-            text="<b>Bajo Impacto<br>Alta Factibilidad</b>",
-            showarrow=False,
-            font=dict(size=11, color="#4e4e4c", family="Calibri, Arial"),
-            align="center",
-            bgcolor="rgba(255,255,255,0.7)",
-            bordercolor="#e1e1e1",
-            borderwidth=1,
-            borderpad=4
+            bgcolor="rgba(255,255,255,0.85)",
+            bordercolor="#F39C12",
+            borderwidth=0.5,
+            borderpad=3
         )
     ]
     
-    for ann in quadrant_annotations:
-        fig.add_annotation(ann)
+    for label in quadrant_labels:
+        fig.add_annotation(**label)
 
-    # Display del gráfico
+    # ETIQUETAS DE UMBRAL - MEJOR POSICIONADAS
+    fig.add_annotation(
+        x=3, y=5.4,
+        text="<b>Umbral Factibilidad</b>",
+        showarrow=False,
+        font=dict(size=10, color="#0f69b4", family="Arial"),
+        bgcolor="white",
+        bordercolor="#0f69b4",
+        borderwidth=0.8,
+        borderpad=4,
+        xanchor="center",
+        yanchor="bottom"
+    )
+    
+    fig.add_annotation(
+        x=5.4, y=3,
+        text="<b>Umbral Impacto</b>",
+        showarrow=False,
+        font=dict(size=10, color="#0f69b4", family="Arial"),
+        bgcolor="white",
+        bordercolor="#0f69b4",
+        borderwidth=0.8,
+        borderpad=4,
+        xanchor="left",
+        yanchor="middle"
+    )
+
     st.plotly_chart(fig, use_container_width=True)
 
-    # Estadísticas resumen minimalistas (sin recuadros)
-    st.divider()
+    # ========== SECCIÓN DE MÉTRICAS ==========
     st.markdown("### Resumen de Clasificaciones")
     
-    col_qw, col_est, col_tac = st.columns(3)
+    col1, col2, col3 = st.columns(3)
     
-    with col_qw:
+    with col1:
         quick_wins = len(df_filtered[df_filtered['Clasificación'] == '🟢 Quick Win'])
+        # Métricas con fondo blanco y texto azul marino
         st.markdown(f"""
-        <div style="text-align: center;">
-            <div style="font-size: 24px; font-weight: 600; color: #0f69b4; margin-bottom: 4px;">
+        <div style="text-align: center; padding: 15px; background-color: white; border-radius: 6px;">
+            <div style="font-size: 36px; font-weight: bold; color: #27AE60; margin-bottom: 5px;">
                 {quick_wins}
             </div>
-            <div style="font-size: 13px; color: #4e4e4c; font-weight: 500; letter-spacing: 0.5px;">
-                QUICK WINS
+            <div style="font-size: 14px; font-weight: 600; color: #0f69b4; text-transform: uppercase; letter-spacing: 0.5px;">
+                Quick Wins
             </div>
         </div>
         """, unsafe_allow_html=True)
     
-    with col_est:
+    with col2:
         estrategicos = len(df_filtered[df_filtered['Clasificación'] == '🔵 Estratégico'])
         st.markdown(f"""
-        <div style="text-align: center;">
-            <div style="font-size: 24px; font-weight: 600; color: #eb3c46; margin-bottom: 4px;">
+        <div style="text-align: center; padding: 15px; background-color: white; border-radius: 6px;">
+            <div style="font-size: 36px; font-weight: bold; color: #0f69b4; margin-bottom: 5px;">
                 {estrategicos}
             </div>
-            <div style="font-size: 13px; color: #4e4e4c; font-weight: 500; letter-spacing: 0.5px;">
-                ESTRATÉGICOS
+            <div style="font-size: 14px; font-weight: 600; color: #0f69b4; text-transform: uppercase; letter-spacing: 0.5px;">
+                Estratégicos
             </div>
         </div>
         """, unsafe_allow_html=True)
     
-    with col_tac:
+    with col3:
         tacticos = len(df_filtered[df_filtered['Clasificación'] == '🟡 Táctico'])
         st.markdown(f"""
-        <div style="text-align: center;">
-            <div style="font-size: 24px; font-weight: 600; color: #183a68; margin-bottom: 4px;">
+        <div style="text-align: center; padding: 15px; background-color: white; border-radius: 6px;">
+            <div style="font-size: 36px; font-weight: bold; color: #F39C12; margin-bottom: 5px;">
                 {tacticos}
             </div>
-            <div style="font-size: 13px; color: #4e4e4c; font-weight: 500; letter-spacing: 0.5px;">
-                TÁCTICOS
+            <div style="font-size: 14px; font-weight: 600; color: #0f69b4; text-transform: uppercase; letter-spacing: 0.5px;">
+                Tácticos
             </div>
         </div>
         """, unsafe_allow_html=True)
 
-    # Tabla de datos - minimalista
-    st.divider()
+    # ========== TABLA DE DATOS ==========
     st.markdown("### Ficha Técnica de Instrumentos")
     
-    # Preparar datos para tabla
+    # Preparar datos para mostrar
     display_df = df_filtered[[
         "ID (P2)", 
         "Instrumento (Nombre Original/Local)", 
         "País Origen (P2)", 
         "Score Factib. Chile", 
         "Score Impacto (1-5)", 
-        "Clasif_Corta"
+        "Clasificación"
     ]].copy()
     
-    # Renombrar columnas para mejor visualización
-    display_df.columns = ["ID", "Instrumento", "País", "Factibilidad", "Impacto", "Clasificación"]
+    # Ordenar por impacto
+    display_df = display_df.sort_values("Score Impacto (1-5)", ascending=False)
     
-    # Ordenar por impacto descendente
-    display_df = display_df.sort_values("Impacto", ascending=False)
-    
-    # Mostrar tabla con estilo minimalista
+    # Mostrar tabla con estilo
     st.dataframe(
         display_df,
         use_container_width=True,
-        height=350,
+        height=300,
         column_config={
-            "ID": st.column_config.TextColumn(width="small"),
-            "Instrumento": st.column_config.TextColumn(width="large"),
-            "País": st.column_config.TextColumn(width="medium"),
-            "Factibilidad": st.column_config.NumberColumn(format="%.1f"),
-            "Impacto": st.column_config.NumberColumn(format="%.1f"),
-            "Clasificación": st.column_config.TextColumn(width="medium")
+            "ID (P2)": st.column_config.TextColumn(
+                "ID",
+                width="small"
+            ),
+            "Instrumento (Nombre Original/Local)": st.column_config.TextColumn(
+                "Instrumento",
+                width="large"
+            ),
+            "País Origen (P2)": st.column_config.TextColumn(
+                "País",
+                width="medium"
+            ),
+            "Score Factib. Chile": st.column_config.NumberColumn(
+                "Factibilidad",
+                format="%.1f",
+                width="small"
+            ),
+            "Score Impacto (1-5)": st.column_config.NumberColumn(
+                "Impacto",
+                format="%.1f",
+                width="small"
+            ),
+            "Clasificación": st.column_config.TextColumn(
+                "Clasificación",
+                width="medium"
+            )
         }
     )
 
-    # Pie de página minimalista
+    # ========== PIE DE PÁGINA ==========
     st.divider()
-    st.caption("Dashboard P7 - Mapa de Replicabilidad de Instrumentos Internacionales | v1.0")
+    st.markdown(
+        "<div style='text-align: center; color: #0f69b4; font-size: 12px;'>"
+        "Dashboard P7 - Mapa de Replicabilidad de Instrumentos Internacionales | "
+        "Consultoría Sustrend para el Ministerio del Medio Ambiente de Chile"
+        "</div>",
+        unsafe_allow_html=True
+    )
 
 except Exception as e:
     st.error(f"Error cargando el Dashboard: {e}")
