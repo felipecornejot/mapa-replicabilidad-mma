@@ -46,7 +46,7 @@ try:
     df_filtered.loc[df_filtered['Clasificación'] == '🔵 Estratégico', 'Size'] = 35
     df_filtered.loc[df_filtered['Clasificación'] == '🟢 Quick Win', 'Size'] = 30
 
-    # Gráfico P7 Mejorado
+    # Gráfico con estética minimalista inspirada en tu referencia
     fig = px.scatter(
         df_filtered, 
         x="Score Factib. Chile", 
@@ -62,12 +62,12 @@ try:
             "Score Impacto (1-5)": ":.1f"
         },
         size="Size",
-        size_max=40,  # Aumentado para mejor visibilidad
-        opacity=0.9,  # Mayor opacidad
+        size_max=38,
+        opacity=0.85,
         color_discrete_map={
-            "🟢 Quick Win": "#27AE60",  # Verde más vibrante
-            "🔵 Estratégico": "#2C3E50",  # Azul oscuro elegante
-            "🟡 Táctico": "#F39C12"   # Amarillo más cálido
+            "🟢 Quick Win": "#27AE60",  # Verde institucional
+            "🔵 Estratégico": "#004488",  # Azul MMA
+            "🟡 Táctico": "#F39C12"   # Amarillo
         },
         labels={
             "Score Factib. Chile": "Factibilidad en Chile (1-5)", 
@@ -75,167 +75,206 @@ try:
         }
     )
 
-    # Añadir líneas de cuadrantes con mejor estilo
+    # Líneas de umbral estilo minimalista
     fig.add_vline(
         x=3, 
-        line_dash="solid",  # Cambiado a sólido para mejor visibilidad
-        line_width=2.5,     # Más grueso
-        line_color="#000000",  # NEGRO
-        opacity=0.9,
-        annotation=dict(
-            text="Umbral Factibilidad",
-            textangle=0,
-            yanchor="top",
-            y=1.02,  # Mover hacia arriba
-            xanchor="center",
-            font=dict(size=12, color="#000000", family="Arial", weight="bold"),  # NEGRO
-            bgcolor="white",
-            borderpad=4,
-            bordercolor="#000000"
-        )
+        line_dash="dash",
+        line_width=1.5,
+        line_color="#333333",
+        opacity=0.7
     )
     
     fig.add_hline(
         y=3, 
-        line_dash="solid",  # Cambiado a sólido
-        line_width=2.5,     # Más grueso
-        line_color="#000000",  # NEGRO
-        opacity=0.9,
-        annotation=dict(
-            text="Umbral Impacto",
-            textangle=0,
-            xanchor="right",
-            x=1.02,  # Mover hacia la derecha
-            yanchor="middle",
-            font=dict(size=12, color="#000000", family="Arial", weight="bold"),  # NEGRO
-            bgcolor="white",
-            borderpad=4,
-            bordercolor="#000000"
-        )
+        line_dash="dash",
+        line_width=1.5,
+        line_color="#333333",
+        opacity=0.7
     )
 
     # Mejorar los textos de los puntos
     fig.update_traces(
         textposition='top center',
         marker=dict(
-            line=dict(width=1, color='DarkSlateGrey')  # Borde para los puntos
+            line=dict(width=0.8, color='rgba(0,0,0,0.3)')
         ),
-        textfont=dict(size=10, family="Arial", color="#000000"),  # Texto negro
-        hovertemplate="<b>%{hovertext}</b><br><br>" +
+        textfont=dict(size=9, family="Arial", color="#333333"),
+        hovertemplate="<b>%{hovertext}</b><br>" +
+                      "Factibilidad: %{x:.1f} | Impacto: %{y:.1f}<br>" +
                       "País: %{customdata[0]}<br>" +
                       "Categoría: %{customdata[1]}<br>" +
-                      "KPI: %{customdata[2]}<br>" +
-                      "Factibilidad: %{x:.1f}<br>" +
-                      "Impacto: %{y:.1f}<br>" +
                       "<extra></extra>"
     )
 
-    # Layout mejorado
+    # Layout minimalista al estilo de tu referencia
     fig.update_layout(
         plot_bgcolor='white',
-        paper_bgcolor='#f8f9fa',  # Fondo suave
+        paper_bgcolor='white',
         xaxis=dict(
             range=[0.5, 5.5], 
-            gridcolor='#e0e0e0',
-            gridwidth=1,
+            gridcolor='rgba(0,0,0,0.08)',  # Grilla muy sutil
+            gridwidth=0.5,
             showline=True,
-            linecolor='#000000',  # Eje X en negro
-            linewidth=2,
-            title_font=dict(size=14, family="Arial", color="#000000", weight="bold"),  # Título eje X negro
-            tickfont=dict(size=12, family="Arial", color="#000000"),  # Números del eje X negro
-            title_text="Factibilidad en Chile (1-5)"  # Título explícito
+            linecolor='rgba(0,0,0,0.3)',
+            linewidth=1,
+            showgrid=True,
+            zeroline=False,
+            title_font=dict(size=13, family="Arial", color="#333333"),
+            tickfont=dict(size=11, family="Arial", color="#333333"),
+            tickmode='linear',
+            tick0=1,
+            dtick=1,
+            ticks="outside",
+            ticklen=4,
+            tickcolor='rgba(0,0,0,0.3)',
+            title_text="Factibilidad en Chile (1-5)"
         ),
         yaxis=dict(
             range=[0.5, 5.5], 
-            gridcolor='#e0e0e0',
-            gridwidth=1,
+            gridcolor='rgba(0,0,0,0.08)',  # Grilla muy sutil
+            gridwidth=0.5,
             showline=True,
-            linecolor='#000000',  # Eje Y en negro
-            linewidth=2,
-            title_font=dict(size=14, family="Arial", color="#000000", weight="bold"),  # Título eje Y negro
-            tickfont=dict(size=12, family="Arial", color="#000000"),  # Números del eje Y negro
-            title_text="Impacto Ambiental (1-5)"  # Título explícito
+            linecolor='rgba(0,0,0,0.3)',
+            linewidth=1,
+            showgrid=True,
+            zeroline=False,
+            title_font=dict(size=13, family="Arial", color="#333333"),
+            tickfont=dict(size=11, family="Arial", color="#333333"),
+            tickmode='linear',
+            tick0=1,
+            dtick=1,
+            ticks="outside",
+            ticklen=4,
+            tickcolor='rgba(0,0,0,0.3)',
+            title_text="Impacto Ambiental (1-5)"
         ),
         legend=dict(
             title=dict(
-                text="<b>Clasificación</b>", 
-                font=dict(size=12, family="Arial", color="#000000")  # Título leyenda negro
+                text="Clasificación", 
+                font=dict(size=12, family="Arial", color="#333333")
             ),
-            font=dict(size=11, family="Arial", color="#000000"),  # Texto leyenda negro
-            bordercolor="#000000",  # Borde negro
-            borderwidth=1,
-            bgcolor="rgba(255,255,255,0.9)"
+            font=dict(size=11, family="Arial", color="#333333"),
+            bordercolor="rgba(0,0,0,0.1)",
+            borderwidth=0.5,
+            bgcolor="rgba(255,255,255,0.8)",
+            x=1.02,
+            xanchor="left",
+            y=1,
+            yanchor="top"
         ),
         title=dict(
-            text="<b>Análisis Mapa de Replicabilidad</b>",  # Título simplificado
-            font=dict(size=20, family="Arial", color="#000000", weight="bold"),  # Título en negro
+            text="Análisis Mapa de Replicabilidad",
+            font=dict(size=16, family="Arial", color="#333333", weight="normal"),
             x=0.5,
-            xanchor='center'
+            xanchor='center',
+            y=0.95
         ),
         hoverlabel=dict(
             bgcolor="white",
-            font_size=12,
+            font_size=11,
             font_family="Arial",
-            font_color="#000000",  # Texto hover negro
-            bordercolor="#000000"
+            font_color="#333333",
+            bordercolor="rgba(0,0,0,0.1)"
         ),
-        margin=dict(l=60, r=60, t=80, b=60),  # Margenes ajustados para mejor visibilidad
-        width=None,  # Usará el ancho del contenedor
-        height=650   # Altura fija para mejor aspecto
+        margin=dict(l=50, r=20, t=80, b=50),
+        width=None,
+        height=600,
+        showlegend=True
     )
 
-    # Añadir cuadrantes con colores de fondo sutiles
+    # Añadir cuadrantes con colores de fondo muy sutiles (como en la referencia)
     fig.add_shape(type="rect",
                   x0=0.5, y0=3, x1=3, y1=5.5,
-                  fillcolor="rgba(46, 204, 113, 0.05)",  # Verde muy tenue
-                  line=dict(width=0))
+                  fillcolor="rgba(39, 174, 96, 0.03)",  # Quick Wins - verde muy tenue
+                  line=dict(width=0),
+                  layer="below")
     
     fig.add_shape(type="rect",
                   x0=3, y0=3, x1=5.5, y1=5.5,
-                  fillcolor="rgba(52, 152, 219, 0.05)",  # Azul muy tenue
-                  line=dict(width=0))
+                  fillcolor="rgba(0, 68, 136, 0.03)",  # Estratégicos - azul muy tenue
+                  line=dict(width=0),
+                  layer="below")
     
     fig.add_shape(type="rect",
                   x0=0.5, y0=0.5, x1=3, y1=3,
-                  fillcolor="rgba(231, 76, 60, 0.03)",  # Rojo muy tenue
-                  line=dict(width=0))
-    
-    fig.add_shape(type="rect",
-                  x0=3, y0=0.5, x1=5.5, y1=3,
-                  fillcolor="rgba(243, 156, 18, 0.03)",  # Naranja muy tenue
-                  line=dict(width=0))
+                  fillcolor="rgba(243, 156, 18, 0.02)",  # Tácticos - amarillo muy tenue
+                  line=dict(width=0),
+                  layer="below")
 
-    # Añadir etiquetas de cuadrantes en negro
+    # Añadir etiquetas de cuadrantes minimalistas
     quadrant_labels = [
-        dict(x=1.75, y=4.5, text="<b>Quick Wins</b><br>(Alto Impacto, Baja Factibilidad)", 
-             font=dict(size=10, color="#000000"), showarrow=False),  # Negro
-        dict(x=4.25, y=4.5, text="<b>Estratégicos</b><br>(Alto Impacto, Alta Factibilidad)", 
-             font=dict(size=10, color="#000000"), showarrow=False),  # Negro
-        dict(x=1.75, y=1.75, text="<b>Baja Prioridad</b><br>(Bajo Impacto, Baja Factibilidad)", 
-             font=dict(size=10, color="#000000"), showarrow=False),  # Negro
-        dict(x=4.25, y=1.75, text="<b>Tácticos</b><br>(Bajo Impacto, Alta Factibilidad)", 
-             font=dict(size=10, color="#000000"), showarrow=False)   # Negro
+        dict(x=1.75, y=4.5, text="QUICK WINS", 
+             font=dict(size=10, family="Arial", color="#27AE60", weight="bold"), 
+             showarrow=False,
+             bgcolor="rgba(255,255,255,0.7)"),
+        dict(x=4.25, y=4.5, text="ESTRATÉGICOS", 
+             font=dict(size=10, family="Arial", color="#004488", weight="bold"), 
+             showarrow=False,
+             bgcolor="rgba(255,255,255,0.7)"),
+        dict(x=4.25, y=1.75, text="TÁCTICOS", 
+             font=dict(size=10, family="Arial", color="#F39C12", weight="bold"), 
+             showarrow=False,
+             bgcolor="rgba(255,255,255,0.7)")
     ]
     
     for label in quadrant_labels:
         fig.add_annotation(**label)
 
-    # Asegurar que los ticks también sean visibles
-    fig.update_xaxes(ticks="outside", tickcolor="#000000", ticklen=6)
-    fig.update_yaxes(ticks="outside", tickcolor="#000000", ticklen=6)
+    # Añadir etiquetas de umbrales discretas
+    fig.add_annotation(
+        x=3, y=5.4,
+        text="Umbral Factibilidad",
+        showarrow=False,
+        font=dict(size=10, color="#666666"),
+        bgcolor="white",
+        bordercolor="#e0e0e0",
+        borderwidth=1,
+        borderpad=3
+    )
+    
+    fig.add_annotation(
+        x=5.4, y=3,
+        text="Umbral Impacto",
+        showarrow=False,
+        font=dict(size=10, color="#666666"),
+        bgcolor="white",
+        bordercolor="#e0e0e0",
+        borderwidth=1,
+        borderpad=3
+    )
 
     st.plotly_chart(fig, use_container_width=True)
 
+    # Sección de métricas resumen
+    st.subheader("Resumen de Clasificaciones")
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        quick_wins = len(df_filtered[df_filtered['Clasificación'] == '🟢 Quick Win'])
+        st.metric("Quick Wins", quick_wins)
+    
+    with col2:
+        estrategicos = len(df_filtered[df_filtered['Clasificación'] == '🔵 Estratégico'])
+        st.metric("Estratégicos", estrategicos)
+    
+    with col3:
+        tacticos = len(df_filtered[df_filtered['Clasificación'] == '🟡 Táctico'])
+        st.metric("Tácticos", tacticos)
+
     # Tabla de datos detallada
     st.subheader("Ficha Técnica de Instrumentos")
-    st.dataframe(df_filtered[[
-        "ID (P2)", 
-        "Instrumento (Nombre Original/Local)", 
-        "País Origen (P2)", 
-        "Score Factib. Chile", 
-        "Score Impacto (1-5)", 
-        "Clasificación"
-    ]], use_container_width=True)
+    st.dataframe(
+        df_filtered[[
+            "ID (P2)", 
+            "Instrumento (Nombre Original/Local)", 
+            "País Origen (P2)", 
+            "Score Factib. Chile", 
+            "Score Impacto (1-5)", 
+            "Clasificación"
+        ]].sort_values("Score Impacto (1-5)", ascending=False),
+        use_container_width=True,
+        height=300
+    )
 
 except Exception as e:
     st.error(f"Error cargando el Dashboard: {e}")
