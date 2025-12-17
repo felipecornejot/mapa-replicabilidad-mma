@@ -11,20 +11,32 @@ st.set_page_config(
     page_icon="🌍"
 )
 
-# ESTILO CSS - FONDO BLANCO LIMPIO CON FILTROS TRANSPARENTES
+# ESTILO CSS - FONDO BLANCO COMPLETO SIN FRANJAS NEGRAS
 st.markdown("""
     <style>
-    /* ===== FONDO BLANCO PARA LA PÁGINA PRINCIPAL ===== */
+    /* ===== ELIMINAR FRANJA NEGRA DEL HEADER ===== */
+    .stApp > header {
+        background-color: white !important;
+    }
+    
+    .stApp > header > div {
+        background-color: white !important;
+    }
+    
+    /* Eliminar cualquier fondo oscuro del header */
+    .st-emotion-cache-18ni7ap {
+        background-color: white !important;
+    }
+    
+    /* ===== FONDO BLANCO PARA TODA LA PÁGINA ===== */
     .main {
         background-color: white !important;
     }
     
-    /* Fondo blanco para el contenedor principal */
     .stApp {
         background-color: white !important;
     }
     
-    /* Fondo blanco para el contenedor de bloque */
     .block-container {
         background-color: white !important;
         padding-top: 1rem !important;
@@ -67,11 +79,6 @@ st.markdown("""
     }
     
     /* ===== FILTROS TRANSPARENTES ===== */
-    /* Contenedor principal de los filtros */
-    div[data-testid="stHorizontalBlock"] {
-        background-color: transparent !important;
-    }
-    
     /* Labels de filtros */
     .stSelectbox label, .stMultiselect label {
         color: #0f69b4 !important;
@@ -80,7 +87,7 @@ st.markdown("""
         background-color: transparent !important;
     }
     
-    /* Widgets de selección - HACER TRANSPARENTES */
+    /* Widgets de selección - TRANSPARENTES */
     div[data-baseweb="select"] > div,
     div[data-baseweb="popover"],
     div[data-baseweb="input"] {
@@ -158,41 +165,10 @@ st.markdown("""
         color: #F39C12 !important;
     }
     
-    /* Scrollbar personalizado */
-    ::-webkit-scrollbar {
-        width: 8px !important;
-        height: 8px !important;
-    }
-    
-    ::-webkit-scrollbar-track {
-        background: #f1f1f1 !important;
-        border-radius: 4px !important;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-        background: #0f69b4 !important;
-        border-radius: 4px !important;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-        background: #0c5490 !important;
-    }
-    
-    /* Asegurar que el caption sea visible */
-    .stCaption {
-        color: #0f69b4 !important;
-        opacity: 0.8 !important;
-    }
-    
     /* Asegurar que los contenedores sean visibles */
     .stPlotlyChart, .stDataFrame {
         visibility: visible !important;
         opacity: 1 !important;
-    }
-    
-    /* Remover cualquier sombra o efecto que pueda ocultar */
-    .element-container, .st-emotion-cache-1y4p8pa {
-        background-color: transparent !important;
     }
     
     /* Asegurar que los emojis de banderas sean visibles */
@@ -200,15 +176,20 @@ st.markdown("""
         background-color: transparent !important;
     }
     
-    /* Inputs transparentes */
-    input, select, textarea {
-        background-color: transparent !important;
-    }
-    
     /* Placeholder color */
     ::placeholder {
         color: #0f69b4 !important;
         opacity: 0.7 !important;
+    }
+    
+    /* Eliminar cualquier fondo de elementos de Streamlit */
+    .st-emotion-cache-1dp5vir, 
+    .st-emotion-cache-zt5igj,
+    .st-emotion-cache-16idsys,
+    .st-emotion-cache-1oe5ca3,
+    .st-emotion-cache-1y4p8pa,
+    .st-emotion-cache-10trblm {
+        background-color: white !important;
     }
     
     </style>
@@ -226,19 +207,44 @@ try:
     st.title("Mapa de Replicabilidad de Instrumentos Internacionales")
     st.caption("Consultoría Sustrend para la Subsecretaría del Medio Ambiente | ID: 608897-205-COT25")
 
-    # FILTROS INTERACTIVOS CON ESTILO TRANSPARENTE
+    # ========== EXPLICACIÓN INICIAL ==========
+    st.markdown("---")
+    st.markdown("""
+    ### 📊 **Guía de Interpretación del Análisis**
+    
+    Este dashboard analiza la **replicabilidad en Chile** de instrumentos internacionales de gestión eficiente de recursos y economía circular. 
+    La evaluación se basa en dos dimensiones clave:
+    
+    **1. Impacto Ambiental (1-5)**  
+    *Puntuación que mide el potencial beneficio ambiental del instrumento si se implementara en Chile.*
+    - **1-2**: Bajo impacto | **3**: Impacto moderado | **4-5**: Alto impacto
+    
+    **2. Factibilidad en Chile (1-5)**  
+    *Puntuación que evalúa la viabilidad de implementación considerando el contexto chileno actual.*
+    - **1-2**: Baja factibilidad | **3**: Factibilidad media | **4-5**: Alta factibilidad
+    
+    **Clasificación estratégica:**  
+    • **🟢 Quick Wins**: Alto impacto, factibilidad media-baja (implementación rápida)  
+    • **🔵 Estratégicos**: Alto impacto, alta factibilidad (prioridad máxima)  
+    • **🟡 Tácticos**: Bajo impacto, alta factibilidad (implementación sencilla)
+    """)
+
+    # FILTROS INTERACTIVOS
+    st.markdown("---")
     st.markdown("### Filtros de Análisis")
+    st.markdown("*Seleccione los países y clasificaciones que desea analizar:*")
+    
     col1, col2 = st.columns(2)
     with col1:
         filtro_pais = st.multiselect(
-            "Seleccionar País de Origen", 
+            "País de Origen", 
             options=df['País Origen (P2)'].unique(), 
             default=df['País Origen (P2)'].unique(),
             help="Filtra los instrumentos por país de origen"
         )
     with col2:
         filtro_clase = st.multiselect(
-            "Seleccionar Clasificación Estratégica", 
+            "Clasificación Estratégica", 
             options=df['Clasificación'].unique(), 
             default=df['Clasificación'].unique(),
             help="Filtra los instrumentos por clasificación estratégica"
@@ -253,7 +259,25 @@ try:
     df_filtered.loc[df_filtered['Clasificación'] == '🟢 Quick Win', 'Size'] = 30
 
     # ========== GRÁFICO PRINCIPAL ==========
+    st.markdown("---")
     st.markdown("### Análisis de Replicabilidad")
+    
+    st.markdown("""
+    **📈 Interpretación del gráfico:**
+    Cada punto representa un instrumento internacional evaluado. Su posición indica:
+    - **Eje X**: Factibilidad de implementación en Chile (1 = baja, 5 = alta)
+    - **Eje Y**: Impacto ambiental potencial (1 = bajo, 5 = alto)
+    
+    **📊 Líneas de referencia (rojo):**
+    - **Línea vertical (3 en X)**: Umbral mínimo de factibilidad para considerar implementación
+    - **Línea horizontal (3 en Y)**: Umbral mínimo de impacto ambiental para ser considerado relevante
+    
+    **🎯 Cuadrantes estratégicos:**
+    1. **Superior derecho (🔵)**: Estratégicos - Alta prioridad
+    2. **Superior izquierdo (🟢)**: Quick Wins - Oportunidades rápidas
+    3. **Inferior derecho (🟡)**: Tácticos - Implementación sencilla
+    4. **Inferior izquierdo**: Baja prioridad - Revisar en el largo plazo
+    """)
     
     # Crear el gráfico
     fig = px.scatter(
@@ -284,20 +308,20 @@ try:
         }
     )
 
-    # LÍNEAS DE UMBRAL - CAMBIADO A ROJO GOBIERNO (#eb3c46)
+    # LÍNEAS DE UMBRAL - ROJO GOBIERNO (#eb3c46)
     fig.add_vline(
         x=3, 
         line_dash="dash",
-        line_width=1.8,  # Un poco más grueso para mejor visibilidad
-        line_color="#eb3c46",  # ROJO GOBIERNO (#eb3c46)
+        line_width=1.8,
+        line_color="#eb3c46",
         opacity=0.8
     )
     
     fig.add_hline(
         y=3, 
         line_dash="dash",
-        line_width=1.8,  # Un poco más grueso para mejor visibilidad
-        line_color="#eb3c46",  # ROJO GOBIERNO (#eb3c46)
+        line_width=1.8,
+        line_color="#eb3c46",
         opacity=0.8
     )
 
@@ -441,7 +465,7 @@ try:
     for label in quadrant_labels:
         fig.add_annotation(**label)
 
-    # ETIQUETAS DE UMBRAL - EN ROJO GOBIERNO
+    # ETIQUETAS DE UMBRAL
     fig.add_annotation(
         x=3, y=5.4,
         text="<b>Umbral Factibilidad</b>",
@@ -472,15 +496,24 @@ try:
     st.plotly_chart(fig, use_container_width=True)
 
     # ========== SECCIÓN DE MÉTRICAS ==========
+    st.markdown("---")
     st.markdown("### Resumen de Clasificaciones")
+    
+    st.markdown("""
+    **📊 Interpretación de las métricas:**
+    Este resumen muestra la cantidad de instrumentos en cada categoría estratégica según los filtros aplicados.
+    - **Quick Wins**: Instrumentos con alto impacto ambiental pero factibilidad media-baja. Prioridad para implementación rápida.
+    - **Estratégicos**: Máxima prioridad - alto impacto y alta factibilidad. Implementación recomendada en el corto plazo.
+    - **Tácticos**: Bajo impacto pero alta factibilidad. Útiles para ganar experiencia con baja inversión.
+    """)
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
         quick_wins = len(df_filtered[df_filtered['Clasificación'] == '🟢 Quick Win'])
         st.markdown(f"""
-        <div style="text-align: center; padding: 20px; background-color: white; border-radius: 6px; border: 1px solid #e0e0e0;">
-            <div style="font-size: 36px; font-weight: bold; color: #27AE60; margin-bottom: 5px;">
+        <div style="text-align: center; padding: 15px; background-color: white; border-radius: 6px; border: 1px solid #e0e0e0;">
+            <div style="font-size: 32px; font-weight: bold; color: #27AE60; margin-bottom: 5px;">
                 {quick_wins}
             </div>
             <div style="font-size: 14px; font-weight: 600; color: #0f69b4; text-transform: uppercase; letter-spacing: 0.5px;">
@@ -492,8 +525,8 @@ try:
     with col2:
         estrategicos = len(df_filtered[df_filtered['Clasificación'] == '🔵 Estratégico'])
         st.markdown(f"""
-        <div style="text-align: center; padding: 20px; background-color: white; border-radius: 6px; border: 1px solid #e0e0e0;">
-            <div style="font-size: 36px; font-weight: bold; color: #0f69b4; margin-bottom: 5px;">
+        <div style="text-align: center; padding: 15px; background-color: white; border-radius: 6px; border: 1px solid #e0e0e0;">
+            <div style="font-size: 32px; font-weight: bold; color: #0f69b4; margin-bottom: 5px;">
                 {estrategicos}
             </div>
             <div style="font-size: 14px; font-weight: 600; color: #0f69b4; text-transform: uppercase; letter-spacing: 0.5px;">
@@ -505,8 +538,8 @@ try:
     with col3:
         tacticos = len(df_filtered[df_filtered['Clasificación'] == '🟡 Táctico'])
         st.markdown(f"""
-        <div style="text-align: center; padding: 20px; background-color: white; border-radius: 6px; border: 1px solid #e0e0e0;">
-            <div style="font-size: 36px; font-weight: bold; color: #F39C12; margin-bottom: 5px;">
+        <div style="text-align: center; padding: 15px; background-color: white; border-radius: 6px; border: 1px solid #e0e0e0;">
+            <div style="font-size: 32px; font-weight: bold; color: #F39C12; margin-bottom: 5px;">
                 {tacticos}
             </div>
             <div style="font-size: 14px; font-weight: 600; color: #0f69b4; text-transform: uppercase; letter-spacing: 0.5px;">
@@ -516,7 +549,25 @@ try:
         """, unsafe_allow_html=True)
 
     # ========== TABLA DE DATOS ==========
+    st.markdown("---")
     st.markdown("### Ficha Técnica de Instrumentos")
+    
+    st.markdown("""
+    **📋 Interpretación de la tabla:**
+    Esta tabla detalla cada instrumento evaluado. Las columnas incluyen:
+    - **ID**: Identificador único del instrumento
+    - **Instrumento**: Nombre del instrumento internacional
+    - **País**: País de origen
+    - **Factibilidad**: Puntuación de 1-5 (1=baja, 5=alta)
+    - **Impacto**: Puntuación de 1-5 (1=bajo, 5=alto)
+    - **Clasificación**: Categoría estratégica asignada
+    
+    **💡 Contexto según el informe:**
+    La evaluación considera factores como madurez institucional, dependencia normativa, 
+    complejidad de gobernanza, evidencia de resultados y compatibilidad con el marco chileno. 
+    Los instrumentos con alta replicabilidad son aquellos que requieren ajustes menores y 
+    se alinean con capacidades existentes en Chile.
+    """)
     
     display_df = df_filtered[[
         "ID (P2)", 
@@ -544,30 +595,35 @@ try:
         }
     )
 
-    # ========== PIE DE PÁGINA CON MEMBRETE DEL GOBIERNO ==========
-    st.divider()
+    # ========== PIE DE PÁGINA CON MEMBRETE PEQUEÑO ==========
+    st.markdown("---")
+    
+    # Espaciado para el pie de página
+    st.markdown("<div style='height: 50px;'></div>", unsafe_allow_html=True)
     
     # Verificar si existe la imagen del membrete
     membrete_path = Path("membrete.png")
     
-    if membrete_path.exists():
-        # Mostrar el membrete como imagen
-        st.image(
-            "membrete.png", 
-            use_container_width=True,
-            caption=""
-        )
-    else:
-        # Si no existe la imagen, mostrar un membrete en texto
-        st.markdown("""
-        <div style="text-align: center; color: #0f69b4; font-size: 14px; margin-top: 30px;">
-            <hr style="border: 1px solid #0f69b4; margin: 20px 0;">
-            <p style="font-weight: bold; font-size: 16px;">Gobierno de Chile</p>
-            <p style="font-size: 14px;">Ministerio del Medio Ambiente</p>
-            <p style="font-size: 12px; opacity: 0.8;">Subsecretaría del Medio Ambiente</p>
-            <p style="font-size: 11px; opacity: 0.6;">Dashboard - Mapa de Replicabilidad de Instrumentos Internacionales</p>
-        </div>
-        """, unsafe_allow_html=True)
+    # Contenedor para el membrete (esquina inferior izquierda)
+    col1, col2, col3 = st.columns([3, 6, 3])
+    
+    with col1:
+        if membrete_path.exists():
+            # Mostrar el membrete pequeño en la esquina inferior izquierda
+            st.markdown("""
+            <div style="position: relative; bottom: 0; left: 0;">
+                <img src="membrete.png" style="width: 120px; height: auto; opacity: 0.8;">
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            # Membrette textual pequeño
+            st.markdown("""
+            <div style="font-size: 8px; color: #0f69b4; opacity: 0.6; margin-top: 20px;">
+                <p style="margin: 0; padding: 0; font-weight: bold;">Gobierno de Chile</p>
+                <p style="margin: 0; padding: 0;">Ministerio del Medio Ambiente</p>
+                <p style="margin: 0; padding: 0; font-size: 7px;">Dashboard de Replicabilidad</p>
+            </div>
+            """, unsafe_allow_html=True)
 
 except Exception as e:
     st.error(f"Error cargando el Dashboard: {e}")
